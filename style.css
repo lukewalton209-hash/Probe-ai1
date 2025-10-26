@@ -1,9 +1,6 @@
-/* ====== PROBE AI STYLES ====== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* =========================
+   PROBE AI - Complete Styles
+   ========================= */
 
 :root {
   --bg-dark: #0a0e27;
@@ -20,21 +17,20 @@
   --blue: #2196F3;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: var(--bg-dark) !important;
-  padding: 0;
-  margin: 0;
+  background: var(--bg-dark);
+  color: var(--text-primary);
   overflow-x: hidden;
   color-scheme: dark;
 }
 
-html {
-  background: var(--bg-dark) !important;
-  color-scheme: dark;
-}
-
-/* Header */
 .header {
   background: #0d1128;
   padding: 14px 16px;
@@ -46,11 +42,13 @@ html {
   top: 0;
   z-index: 100;
 }
+
 .header-title {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
 }
+
 .menu-btn {
   background: #2a3f5f;
   border: none;
@@ -65,13 +63,13 @@ html {
   justify-content: center;
 }
 
-/* Probe Banner */
 .probe-banner {
   background: linear-gradient(135deg, #1a1f3a 0%, #2a3f5f 100%);
   padding: 7px;
   text-align: center;
   border-bottom: 1px solid var(--accent-cyan);
 }
+
 .probe-logo {
   display: flex;
   align-items: center;
@@ -79,7 +77,11 @@ html {
   gap: 3px;
   margin-bottom: 3px;
 }
-.probe-icon { font-size: 12px; }
+
+.probe-icon {
+  font-size: 12px;
+}
+
 .probe-title {
   font-size: 16px;
   font-weight: 800;
@@ -89,6 +91,7 @@ html {
   background-clip: text;
   letter-spacing: 1px;
 }
+
 .probe-subtitle {
   color: var(--accent-cyan);
   font-size: 6px;
@@ -96,13 +99,13 @@ html {
   letter-spacing: 0.3px;
 }
 
-/* Control bar buttons */
 .control-bar {
   padding: 5px 6px;
   display: flex;
   gap: 3px;
   background: var(--bg-dark);
 }
+
 .btn {
   flex: 1;
   padding: 4px 6px;
@@ -117,13 +120,25 @@ html {
   justify-content: center;
   gap: 2px;
 }
-.btn-active { background: var(--accent-green); color: #000; }
-.btn-save { background: #2196F3; color: white; }
-.btn-reset { background: var(--red-alert); color: white; }
+
+.btn-active {
+  background: var(--accent-green);
+  color: #000;
+}
+
+.btn-save {
+  background: var(--blue);
+  color: white;
+}
+
+.btn-reset {
+  background: var(--red-alert);
+  color: white;
+}
+
 .btn:hover { opacity: 0.8; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Status line */
 .status-line {
   padding: 3px 6px;
   background: var(--bg-panel);
@@ -132,9 +147,16 @@ html {
   border-bottom: 1px solid var(--border-color);
 }
 
-/* Containers */
-.container { padding: 5px; max-width: 1400px; margin: 0 auto; }
-.section { margin-bottom: 5px; }
+.container {
+  padding: 5px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 5px;
+}
+
 .section-header {
   display: flex;
   align-items: center;
@@ -145,14 +167,20 @@ html {
   padding-bottom: 2px;
   border-bottom: 1px solid var(--border-color);
 }
-.section-icon { font-size: 8px; }
 
-/* Super agents grid */
+.section-icon {
+  font-size: 8px;
+}
+
+/* -----------------------------
+   Super Agents Grid & Cards
+------------------------------ */
 .super-agents-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 5px;
 }
+
 .super-agent-card {
   background: linear-gradient(135deg, #1a1f3a 0%, #2a1f3a 100%);
   border: 2px solid;
@@ -160,6 +188,7 @@ html {
   border-radius: 4px;
   padding: 5px;
 }
+
 .super-agent-card.physics { border-color: #fc3d21; box-shadow: 0 0 8px rgba(252, 61, 33, 0.3); }
 .super-agent-card.math { border-color: var(--blue); box-shadow: 0 0 8px rgba(33, 150, 243, 0.3); }
 .super-agent-card.chemistry { border-color: var(--accent-green); box-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
@@ -167,29 +196,232 @@ html {
 .super-agent-card.logic { border-color: var(--accent-purple); box-shadow: 0 0 8px rgba(157, 78, 221, 0.3); }
 .super-agent-card.medicine { border-color: var(--gold); box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
 
-/* Sub-agents */
-.sub-agents-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 2px;
-  margin-top: 3px;
-}
-.sub-agent-card {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-color);
-  border-radius: 2px;
-  padding: 2px;
-  transition: all 0.3s;
-}
-.sub-agent-card.active {
-  border-color: var(--accent-green);
-  box-shadow: 0 0 3px rgba(0, 255, 136, 0.3);
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 3px rgba(0, 255, 136, 0.3); }
-  50% { box-shadow: 0 0 8px rgba(0, 255, 136, 0.6); }
+.super-agent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid;
 }
 
-/* Neural stream, chat, thought processing, simulator, collaboration, logs */
-/* ... continue adding all remaining Probe AI CSS from your embedded style ... */
+.super-agent-card.physics .super-agent-header { border-color: #fc3d21; }
+.super-agent-card.math .super-agent-header { border-color: var(--blue); }
+.super-agent-card.chemistry .super-agent-header { border-color: var(--accent-green); }
+.super-agent-card.biology .super-agent-header { border-color: var(--accent-cyan); }
+.super-agent-card.logic .super-agent-header { border-color: var(--accent-purple); }
+.super-agent-card.medicine .super-agent-header { border-color: var(--gold); }
+
+.super-agent-title {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.super-agent-name {
+  font-size: 8px;
+  font-weight: 800;
+}
+
+/* -----------------------------
+   Neural Stream
+------------------------------ */
+.neural-stream {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 4px;
+  max-height: 80px;
+  overflow-y: auto;
+  font-size: 5px;
+}
+
+.stream-item {
+  padding: 2px;
+  margin-bottom: 2px;
+  background: rgba(0, 217, 255, 0.05);
+  border-left: 1px solid var(--accent-cyan);
+  border-radius: 2px;
+  font-size: 5px;
+  color: var(--text-secondary);
+}
+
+.stream-topic { font-weight: 600; color: var(--accent-cyan); }
+
+/* -----------------------------
+   Agent Chat
+------------------------------ */
+.agent-chat {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 4px;
+  max-height: 100px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+}
+
+.chat-message {
+  padding: 3px;
+  margin-bottom: 3px;
+  border-radius: 2px;
+  font-size: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-message.physics { background: rgba(252, 61, 33, 0.1); border-left: 2px solid #fc3d21; }
+.chat-message.math { background: rgba(33, 150, 243, 0.1); border-left: 2px solid #2196F3; }
+.chat-message.chemistry { background: rgba(0, 255, 136, 0.1); border-left: 2px solid #00ff88; }
+.chat-message.biology { background: rgba(0, 217, 255, 0.1); border-left: 2px solid #00d9ff; }
+.chat-message.logic { background: rgba(157, 78, 221, 0.1); border-left: 2px solid #9d4edd; }
+.chat-message.medicine { background: rgba(255, 215, 0, 0.1); border-left: 2px solid #ffd700; }
+
+/* -----------------------------
+   Thought Processing
+------------------------------ */
+.thought-processing {
+  background: linear-gradient(135deg, #1a1f3a 0%, #2a1f3a 50%, #1a2f3a 100%);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 3px;
+  padding: 5px;
+  max-height: 120px;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+.thought-message {
+  padding: 3px;
+  margin-bottom: 4px;
+  border-radius: 2px;
+  font-size: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  animation: thoughtFadeIn 0.5s;
+  background: rgba(0, 217, 255, 0.05);
+  border-left: 2px solid;
+}
+
+@keyframes thoughtFadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.thought-message.insight { border-left-color: var(--accent-cyan); }
+.thought-message.learning { border-left-color: var(--accent-green); }
+.thought-message.discovery { border-left-color: var(--orange-warm); background: rgba(255, 99, 72, 0.08); }
+.thought-message.pattern { border-left-color: var(--accent-purple); }
+.thought-message.optimization { border-left-color: var(--gold); }
+.thought-message.cross-learning { border-left-color: var(--accent-purple); background: rgba(157, 78, 221, 0.08); }
+
+.thought-label { font-weight: 700; font-size: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.thought-message.learning .thought-label { color: var(--accent-green); }
+.thought-message.discovery .thought-label { color: var(--orange-warm); }
+.thought-message.pattern .thought-label { color: var(--accent-purple); }
+.thought-message.optimization .thought-label { color: var(--gold); }
+.thought-message.cross-learning .thought-label { color: var(--accent-purple); }
+
+.thought-text { color: var(--text-secondary); font-size: 6px; }
+.thought-metric { color: var(--accent-cyan); font-weight: 600; font-size: 5px; }
+
+/* -----------------------------
+   Simulator
+------------------------------ */
+.simulator-panel {
+  background: var(--bg-panel);
+  border-radius: 4px;
+  padding: 5px;
+  border: 1px solid var(--border-color);
+}
+
+.simulator-controls {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 3px;
+}
+
+.sim-btn {
+  flex: 1;
+  padding: 3px;
+  border-radius: 3px;
+  font-size: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+}
+
+.sim-btn-primary { background: var(--blue); color: white; }
+.sim-btn-secondary { background: var(--orange-warm); color: white; }
+.sim-btn-success { background: var(--accent-green); color: white; }
+
+.sim-stats {
+  display: flex;
+  gap: 4px;
+  font-size: 6px;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+/* Problem & Solution Panels */
+.simulator-display {
+  display: flex;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.problem-panel, .solution-panel {
+  flex: 1;
+  background: linear-gradient(135deg, #1a1f3a 0%, #1a2f3a 100%);
+  border-radius: 3px;
+  border: 1px solid var(--border-color);
+  padding: 3px;
+  font-size: 6px;
+  min-height: 50px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.panel-header { font-weight: 700; margin-bottom: 2px; font-size: 6px; color: var(--accent-cyan); }
+
+.collaboration-stream {
+  margin-top: 2px;
+  padding: 3px;
+  font-size: 5px;
+  max-height: 50px;
+  overflow-y: auto;
+  background: rgba(0, 217, 255, 0.05);
+  border-left: 2px solid var(--accent-cyan);
+}
+
+/* -----------------------------
+   Activity Log
+------------------------------ */
+.activity-log {
+  background: var(--bg-panel);
+  border-radius: 3px;
+  padding: 4px;
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 5px;
+  border: 1px solid var(--border-color);
+}
+
+.log-entry {
+  padding: 3px;
+  margin-bottom: 2px;
+  border-bottom: 1px dashed rgba(255,255,255,0.1);
+  font-size: 5px;
+  color: var(--text-secondary);
+}
