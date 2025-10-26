@@ -1,4 +1,4 @@
-// script.js - Safari/GitHub Pages ready with network + grid view (no white status above agents)
+// script.js - Safari/GitHub Pages ready with network + grid view
 
 const AGENT_COUNT = 36;
 const AGENTS = [
@@ -19,11 +19,6 @@ const container = document.querySelector('.container');          // for grid
 // create grid container
 let gridEl = document.createElement('div');
 gridEl.className = 'grid';
-gridEl.style.display = 'grid';
-gridEl.style.gridTemplateColumns = 'repeat(auto-fit, minmax(150px, 1fr))';
-gridEl.style.gap = '10px';
-gridEl.style.width = '100%';
-gridEl.style.marginTop = '0'; // tighter spacing
 container.insertBefore(gridEl, container.firstChild.nextSibling); // insert after banner
 
 // function to log messages
@@ -58,21 +53,19 @@ function renderNetwork(){
   });
 }
 
-// render grid view (no status text, tight layout)
+// render grid view
 function renderGrid(){
   gridEl.innerHTML = '';
   AGENTS.forEach(agent => {
     const card = document.createElement('div');
     card.className = 'card';
-    card.style.margin = '0';      // collapse vertical spacing
-    card.style.padding = '10px';  // consistent padding
-    card.style.boxSizing = 'border-box';
-    card.innerHTML = `<div class="agent-title">${agent}</div>`; // only agent name
+    // Only include the agent title, no status text
+    card.innerHTML = `<div class="agent-title">${agent}</div>`;
     gridEl.appendChild(card);
   });
 }
 
-// simulate agent activation (no status update)
+// simulate agent activation
 function runAgents(){
   startBtn.disabled = true;
   startBtn.innerText = 'Activating…';
@@ -81,7 +74,15 @@ function runAgents(){
   AGENTS.forEach(agent => {
     const result = `${agent}: simulated result ready`;
     log(result);
-    // grid cards remain unchanged
+    
+    // update grid card visually
+    const cards = gridEl.getElementsByClassName('card');
+    for (let card of cards){
+      if(card.querySelector('.agent-title').innerText === agent){
+        card.classList.add('active'); // visually mark active
+        break;
+      }
+    }
   });
 
   startBtn.innerText = 'Activated';
@@ -94,3 +95,33 @@ renderGrid();
 
 // attach click handler
 startBtn.addEventListener('click', runAgents);
+
+/* Optional: add some CSS dynamically for active cards */
+const style = document.createElement('style');
+style.innerHTML = `
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    width: 100%;
+  }
+  .card {
+    background-color: #1a1f3d;
+    border-radius: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+    color: white;
+    text-align: center;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  .card.active {
+    background-color: #4a9eff;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #4a9eff;
+  }
+  .agent-title {
+    font-weight: bold;
+    font-size: 14px;
+  }
+`;
+document.head.appendChild(style);
