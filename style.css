@@ -886,8 +886,10 @@ background: var(–accent-cyan);
   50% { transform: scale(1.2); }
 }
 
-/* Hide everything above the cards */
-body *:not(.super-agents-grid):not(.super-agents-grid *) {
+/* --- Safe Hide Top Banners --- */
+.header,
+.probe-banner,
+.status-line {
     display: none !important;
 }
 
