@@ -117,126 +117,90 @@
 <body>
   <div class="neural-stream-indicator" id="stream-indicator">🌊 Neural Stream: Active</div>
 
-<div class="header">
-  <div class="menu-btn">✕</div>
-  <div class="header-title">PROBE AI - Enhanced: Cross-Learning + Smart Caching + API Fallback</div>
-  <div class="menu-btn">⋯</div>
-</div>
+  <div class="container">
 
-<div class="probe-banner">
-  <div class="probe-logo">
-    <span class="probe-icon">🧬</span>
-    <h1 class="probe-title">PROBE AI</h1>
-    <span class="probe-icon">⚛️</span>
-  </div>
-  <div class="probe-subtitle">36 Sub-Agents • 216 REAL APIs • 6 DOMAINS COMPLETE • Cross-Learning</div>
-</div>
-
-<div class="control-bar">
-  <button class="btn btn-save" id="startBtn">
-    <span>▶</span> STARTING...
-  </button>
-  <button class="btn btn-save" id="saveBtn">
-    <span>💾</span> Save
-  </button>
-  <button class="btn btn-reset" id="resetBtn">
-    <span>↻</span> Reset
-  </button>
-</div>
-
-<div class="status-line" id="statusLine">
-  Cycle: <span id="cycleCount">0</span> | 
-  Training: <span id="trainingStatus" style="color: var(--accent-green);">⚡ ACTIVE</span> | 
-  API: <span id="apiAttempts">0</span> | 
-  Success: <span id="apiSuccess">0</span> | 
-  Cache: <span id="cacheHits">0</span> | 
-  X-Learn: <span id="crossLearning">0</span> | 
-  Avg R²: <span id="avgR2">0.000</span>
-</div>
-
-<div class="container">
-
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🔥</span>
-      All Super-Agents (Enhanced with Cross-Learning)
-    </div>
-    <div class="super-agents-grid" id="superAgentsGrid"></div>
-  </div>
-
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🧠</span>
-      Neural Stream
-    </div>
-    <div class="neural-stream" id="neuralStream"></div>
-  </div>
-
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">⚡</span>
-      Agent Chat - Live Computation
-    </div>
-    <div class="agent-chat" id="agentChat"></div>
-  </div>
-
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🧠</span>
-      Thought Processing - AI Learning Insights
-    </div>
-    <div class="thought-processing" id="thoughtProcessing"></div>
-  </div>
-
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🔬</span>
-      SUPER SIMULATOR - Multi-Domain Problem Solving
-    </div>
-    <div class="simulator-panel" id="simulatorPanel">
-      <div class="simulator-controls">
-        <button class="sim-btn sim-btn-primary" id="startSimBtn">
-          <span>🚀</span> Start Simulation
-        </button>
-        <button class="sim-btn sim-btn-secondary" id="generateProblemBtn">
-          <span>🎲</span> Generate Problem
-        </button>
-        <button class="sim-btn sim-btn-success" id="solveBtn">
-          <span>⚡</span> Solve Current
-        </button>
-        <div class="sim-stats">
-          <span>Problems: <strong id="problemCount">0</strong></span>
-          <span>Solved: <strong id="solvedCount">0</strong></span>
-          <span>Novel: <strong id="novelCount">0</strong></span>
-        </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🔥</span>
+        All Super-Agents (Enhanced with Cross-Learning)
       </div>
-      <div class="simulator-display">
-        <div class="problem-panel">
-          <div class="panel-header">Current Problem</div>
-          <div class="problem-content" id="problemContent">
-            Waiting for simulation to start...
+      <div class="super-agents-grid" id="superAgentsGrid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🧠</span>
+        Neural Stream
+      </div>
+      <div class="neural-stream" id="neuralStream"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">⚡</span>
+        Agent Chat - Live Computation
+      </div>
+      <div class="agent-chat" id="agentChat"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🧠</span>
+        Thought Processing - AI Learning Insights
+      </div>
+      <div class="thought-processing" id="thoughtProcessing"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🔬</span>
+        SUPER SIMULATOR - Multi-Domain Problem Solving
+      </div>
+      <div class="simulator-panel" id="simulatorPanel">
+        <div class="simulator-controls">
+          <button class="sim-btn sim-btn-primary" id="startSimBtn">
+            <span>🚀</span> Start Simulation
+          </button>
+          <button class="sim-btn sim-btn-secondary" id="generateProblemBtn">
+            <span>🎲</span> Generate Problem
+          </button>
+          <button class="sim-btn sim-btn-success" id="solveBtn">
+            <span>⚡</span> Solve Current
+          </button>
+          <div class="sim-stats">
+            <span>Problems: <strong id="problemCount">0</strong></span>
+            <span>Solved: <strong id="solvedCount">0</strong></span>
+            <span>Novel: <strong id="novelCount">0</strong></span>
           </div>
         </div>
-        <div class="solution-panel">
-          <div class="panel-header">Multi-Agent Solution</div>
-          <div class="solution-content" id="solutionContent">
-            36 agents ready to collaborate...
+        <div class="simulator-display">
+          <div class="problem-panel">
+            <div class="panel-header">Current Problem</div>
+            <div class="problem-content" id="problemContent">
+              Waiting for simulation to start...
+            </div>
+          </div>
+          <div class="solution-panel">
+            <div class="panel-header">Multi-Agent Solution</div>
+            <div class="solution-content" id="solutionContent">
+              36 agents ready to collaborate...
+            </div>
           </div>
         </div>
+        <div class="collaboration-stream" id="collaborationStream"></div>
       </div>
-      <div class="collaboration-stream" id="collaborationStream"></div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">📋</span>
-      Activity Log
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📋</span>
+        Activity Log
+      </div>
+      <div class="activity-log" id="activityLog"></div>
     </div>
-    <div class="activity-log" id="activityLog"></div>
-  </div>
 
-</div>
+  </div>
+</body>
 
 <script>
 /* ========== ENHANCED: API CONFIGURATION WITH PRIORITY & FALLBACKS ========== */
