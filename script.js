@@ -1,6 +1,5 @@
-// script.js - Clean version: no boxes above Super Agents grid, full functionality
+// script.js - Clean version for stripped-down Probe AI
 
-const AGENT_COUNT = 36;
 const AGENTS = [
   "Physics","Mathematics","Logic","Neuroscience","Cognitive Science","Optimization",
   "Robotics","Systems","Ethics","Philosophy","Economics","Sociology",
@@ -11,60 +10,44 @@ const AGENTS = [
 ];
 
 // UI elements
-const startBtn = document.getElementById('startBtn');
-const networkCanvas = document.getElementById('superAgentsGrid'); // network display
-const logEl = document.getElementById('activityLog');            // logs
-const container = document.querySelector('.container');          // container
+const startBtn = document.getElementById('startBtn'); // you may keep if you want a start button elsewhere
+const superAgentsGrid = document.getElementById('superAgentsGrid');
+const activityLog = document.getElementById('activityLog');
 
-// create grid container for Super Agents
-let gridEl = document.createElement('div');
-gridEl.className = 'super-agents-grid';
-container.appendChild(gridEl);
-
-// function to log messages
+// Function to log messages
 function log(msg){
   const entry = document.createElement('div');
   entry.className = 'log-entry';
   entry.innerText = msg;
-  logEl.prepend(entry);
+  activityLog.prepend(entry);
 }
 
-// render network nodes – only center node, no extra agent boxes
-function renderNetwork(){
-  networkCanvas.innerHTML = ''; // clear previous nodes
-
-  const center = document.createElement('div');
-  center.className = 'center-node';
-  center.innerText = 'Probe AI';
-  networkCanvas.appendChild(center);
-}
-
-// render Super Agents grid
+// Render the Super Agents grid
 function renderGrid(){
-  gridEl.innerHTML = ''; // clear previous
-
+  superAgentsGrid.innerHTML = '';
   AGENTS.forEach(agent => {
     const card = document.createElement('div');
     card.className = 'card';
-
-    // Only the agent title
     card.innerHTML = `<div class="agent-title">${agent}</div>`;
-    gridEl.appendChild(card);
+    superAgentsGrid.appendChild(card);
   });
 }
 
-// simulate agent activation
+// Simulate agent activation
 function runAgents(){
-  startBtn.disabled = true;
-  startBtn.innerText = 'Activating…';
-  log('Starting all 36 agents...');
+  if(startBtn){
+    startBtn.disabled = true;
+    startBtn.innerText = 'Activating…';
+  }
+
+  log('Starting all agents...');
 
   AGENTS.forEach(agent => {
     const result = `${agent}: simulated result ready`;
     log(result);
 
-    // highlight active card
-    const cards = gridEl.getElementsByClassName('card');
+    // Mark agent as active in grid
+    const cards = superAgentsGrid.getElementsByClassName('card');
     for (let card of cards){
       if(card.querySelector('.agent-title').innerText === agent){
         card.classList.add('active');
@@ -73,49 +56,50 @@ function runAgents(){
     }
   });
 
-  startBtn.innerText = 'Activated';
-  startBtn.disabled = false;
+  if(startBtn){
+    startBtn.innerText = 'Activated';
+    startBtn.disabled = false;
+  }
 }
 
-// initial render
-renderNetwork();
+// Initial render
 renderGrid();
 
-// attach click handler
-startBtn.addEventListener('click', runAgents);
+// Optional: attach to start button if you still have one
+if(startBtn){
+  startBtn.addEventListener('click', runAgents);
+}
 
-// dynamic CSS for Super Agents cards
+// Optional: add some CSS dynamically for the cards
 const style = document.createElement('style');
 style.innerHTML = `
   .super-agents-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
     width: 100%;
-    margin-top: 10px;
   }
-
   .card {
     background-color: #1a1f3d;
     border-radius: 8px;
     padding: 10px;
-    box-sizing: border-box;
     color: white;
     text-align: center;
-    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
-    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
   }
-
   .card.active {
     background-color: #4a9eff;
     transform: scale(1.05);
     box-shadow: 0 0 10px #4a9eff;
   }
-
   .agent-title {
     font-weight: bold;
     font-size: 14px;
-    line-height: 1.2;
+  }
+  .log-entry {
+    font-size: 12px;
+    margin-bottom: 2px;
+    color: #ffffff;
   }
 `;
 document.head.appendChild(style);
