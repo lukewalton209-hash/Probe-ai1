@@ -1,4 +1,4 @@
-// script.js - Clean version for stripped-down Probe AI
+// script.js - Fixed for your Alpha layout
 
 const AGENTS = [
   "Physics","Mathematics","Logic","Neuroscience","Cognitive Science","Optimization",
@@ -9,25 +9,17 @@ const AGENTS = [
   "Visualization","Hardware","Compilers","Distributed Systems","Causality","Creativity"
 ];
 
-// UI elements
-const startBtn = document.getElementById('startBtn'); // you may keep if you want a start button elsewhere
+const startBtn = document.getElementById('startBtn');
 const superAgentsGrid = document.getElementById('superAgentsGrid');
 const activityLog = document.getElementById('activityLog');
 
-// Function to log messages
-function log(msg){
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
-  entry.innerText = msg;
-  activityLog.prepend(entry);
-}
-
-// Render the Super Agents grid
+// Render your Super Agents cards exactly as before
 function renderGrid(){
   superAgentsGrid.innerHTML = '';
   AGENTS.forEach(agent => {
     const card = document.createElement('div');
     card.className = 'card';
+    // Keep the agent name inside the card
     card.innerHTML = `<div class="agent-title">${agent}</div>`;
     superAgentsGrid.appendChild(card);
   });
@@ -35,18 +27,15 @@ function renderGrid(){
 
 // Simulate agent activation
 function runAgents(){
-  if(startBtn){
-    startBtn.disabled = true;
-    startBtn.innerText = 'Activating…';
-  }
-
-  log('Starting all agents...');
+  startBtn.disabled = true;
+  startBtn.innerText = 'Activating…';
+  log('Activating all Super Agents...');
 
   AGENTS.forEach(agent => {
-    const result = `${agent}: simulated result ready`;
+    const result = `${agent}: ready`;
     log(result);
 
-    // Mark agent as active in grid
+    // mark card as active visually
     const cards = superAgentsGrid.getElementsByClassName('card');
     for (let card of cards){
       if(card.querySelector('.agent-title').innerText === agent){
@@ -56,21 +45,23 @@ function runAgents(){
     }
   });
 
-  if(startBtn){
-    startBtn.innerText = 'Activated';
-    startBtn.disabled = false;
-  }
+  startBtn.innerText = 'Activated';
+  startBtn.disabled = false;
+}
+
+// log helper
+function log(msg){
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerText = msg;
+  activityLog.prepend(entry);
 }
 
 // Initial render
 renderGrid();
+startBtn.addEventListener('click', runAgents);
 
-// Optional: attach to start button if you still have one
-if(startBtn){
-  startBtn.addEventListener('click', runAgents);
-}
-
-// Optional: add some CSS dynamically for the cards
+// Optional CSS for cards and activity log
 const style = document.createElement('style');
 style.innerHTML = `
   .super-agents-grid {
@@ -83,8 +74,8 @@ style.innerHTML = `
     background-color: #1a1f3d;
     border-radius: 8px;
     padding: 10px;
-    color: white;
     text-align: center;
+    color: white;
     transition: transform 0.2s, background-color 0.2s;
   }
   .card.active {
