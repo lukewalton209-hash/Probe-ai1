@@ -1,4 +1,4 @@
-// script.js - Safari/GitHub Pages ready with network + grid view
+// script.js - Clean, fully functional version for Super Agents
 
 const AGENT_COUNT = 36;
 const AGENTS = [
@@ -12,14 +12,14 @@ const AGENTS = [
 
 // UI elements
 const startBtn = document.getElementById('startBtn');
-const networkCanvas = document.getElementById('superAgentsGrid'); // network display
+const networkCanvas = document.getElementById('superAgentsGrid'); // grid display
 const logEl = document.getElementById('activityLog');            // logs
-const container = document.querySelector('.container');          // for grid
+const container = document.querySelector('.container');          // container
 
-// create grid container
+// create grid container for Super Agents
 let gridEl = document.createElement('div');
-gridEl.className = 'grid';
-container.insertBefore(gridEl, container.firstChild.nextSibling); // insert after banner
+gridEl.className = 'super-agents-grid';
+container.appendChild(gridEl);
 
 // function to log messages
 function log(msg){
@@ -29,37 +29,27 @@ function log(msg){
   logEl.prepend(entry);
 }
 
-// render network nodes
+// render network nodes – only keep the "Probe AI" center node
 function renderNetwork(){
-  networkCanvas.innerHTML = '';
-  
-  // center node
+  networkCanvas.innerHTML = ''; // clear previous nodes
+
   const center = document.createElement('div');
   center.className = 'center-node';
   center.innerText = 'Probe AI';
   networkCanvas.appendChild(center);
 
-  const R = 150; // radius
-  AGENTS.forEach((agent, i)=>{
-    const angle = (i / AGENTS.length) * Math.PI * 2;
-    const nx = Math.round(Math.cos(angle) * R);
-    const ny = Math.round(Math.sin(angle) * R);
-    const node = document.createElement('div');
-    node.className = 'node';
-    node.style.left = `calc(50% + ${nx}px)`;
-    node.style.top = `calc(50% + ${ny}px)`;
-    node.innerText = agent.split(' ')[0];
-    networkCanvas.appendChild(node);
-  });
+  // Removed all 36 agent nodes above grid
 }
 
-// render grid view
+// render Super Agents grid
 function renderGrid(){
-  gridEl.innerHTML = '';
+  gridEl.innerHTML = ''; // clear previous
+
   AGENTS.forEach(agent => {
     const card = document.createElement('div');
     card.className = 'card';
-    // Only include the agent title, no status text
+
+    // Only the agent title
     card.innerHTML = `<div class="agent-title">${agent}</div>`;
     gridEl.appendChild(card);
   });
@@ -74,12 +64,12 @@ function runAgents(){
   AGENTS.forEach(agent => {
     const result = `${agent}: simulated result ready`;
     log(result);
-    
-    // update grid card visually
+
+    // highlight active card
     const cards = gridEl.getElementsByClassName('card');
     for (let card of cards){
       if(card.querySelector('.agent-title').innerText === agent){
-        card.classList.add('active'); // visually mark active
+        card.classList.add('active');
         break;
       }
     }
@@ -96,15 +86,17 @@ renderGrid();
 // attach click handler
 startBtn.addEventListener('click', runAgents);
 
-/* Optional: add some CSS dynamically for active cards */
+// dynamic CSS for Super Agents cards
 const style = document.createElement('style');
 style.innerHTML = `
-  .grid {
+  .super-agents-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 10px;
     width: 100%;
+    margin-top: 10px;
   }
+
   .card {
     background-color: #1a1f3d;
     border-radius: 8px;
@@ -112,16 +104,20 @@ style.innerHTML = `
     box-sizing: border-box;
     color: white;
     text-align: center;
-    transition: transform 0.2s, background-color 0.2s;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
   }
+
   .card.active {
     background-color: #4a9eff;
     transform: scale(1.05);
     box-shadow: 0 0 10px #4a9eff;
   }
+
   .agent-title {
     font-weight: bold;
     font-size: 14px;
+    line-height: 1.2;
   }
 `;
 document.head.appendChild(style);
