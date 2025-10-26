@@ -1,4 +1,5 @@
-// script.js
+// script.js - Safari/GitHub Pages ready with network + grid view
+
 const AGENT_COUNT = 36;
 const AGENTS = [
   "Physics","Mathematics","Logic","Neuroscience","Cognitive Science","Optimization",
@@ -11,55 +12,16 @@ const AGENTS = [
 
 // UI elements
 const startBtn = document.getElementById('startBtn');
-const viewToggle = document.getElementById('viewToggle');
-const networkView = document.getElementById('networkView');
-const gridView = document.getElementById('gridView');
-const networkCanvas = document.getElementById('networkCanvas');
-const gridEl = document.getElementById('grid');
-const logEl = document.getElementById('log');
+const networkCanvas = document.getElementById('superAgentsGrid'); // network display
+const logEl = document.getElementById('activityLog');            // logs
+const container = document.querySelector('.container');          // for grid
 
-viewToggle.addEventListener('change', () => {
-  if (viewToggle.value === 'network') {
-    networkView.classList.remove('hidden');
-    gridView.classList.add('hidden');
-  } else {
-    networkView.classList.add('hidden');
-    gridView.classList.remove('hidden');
-  }
-});
+// create grid container
+let gridEl = document.createElement('div');
+gridEl.className = 'grid';
+container.insertBefore(gridEl, container.firstChild.nextSibling); // insert after banner
 
-// render network nodes
-function renderNetwork(){
-  networkCanvas.innerHTML = '';
-  const center = document.createElement('div');
-  center.className = 'center-node';
-  center.innerText = 'Probe AI';
-  networkCanvas.appendChild(center);
-  const R = 150;
-  AGENTS.forEach((g,i)=>{
-    const angle = (i / AGENTS.length) * Math.PI * 2;
-    const nx = Math.round(Math.cos(angle) * R);
-    const ny = Math.round(Math.sin(angle) * R);
-    const node = document.createElement('div');
-    node.className = 'node';
-    node.style.left = `calc(50% + ${nx}px)`;
-    node.style.top = `calc(50% + ${ny}px)`;
-    node.innerText = g.split(' ')[0];
-    networkCanvas.appendChild(node);
-  });
-}
-
-// render grid view
-function renderGrid(){
-  gridEl.innerHTML = '';
-  AGENTS.forEach((g,i)=>{
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `<div class="agent-title">${g}</div><div class="agent-sub">Status: idle</div>`;
-    gridEl.appendChild(card);
-  });
-}
-
+// function to log messages
 function log(msg){
   const entry = document.createElement('div');
   entry.className = 'log-entry';
@@ -67,42 +29,68 @@ function log(msg){
   logEl.prepend(entry);
 }
 
-// call backend to run agents
-async function runAgents(){
-  startBtn.disabled = true;
-  startBtn.innerText = 'Activating…';
-  log('Starting agents...');
+// render network nodes
+function renderNetwork(){
+  networkCanvas.innerHTML = '';
+  
+  // center node
+  const center = document.createElement('div');
+  center.className = 'center-node';
+  center.innerText = 'Probe AI';
+  networkCanvas.appendChild(center);
 
-  try {
-    const resp = await fetch('/api/agents', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ agents: AGENTS })
-    });
-    if (!resp.ok) {
-      const text = await resp.text();
-      throw new Error(`Server error: ${text}`);
-    }
-    const data = await resp.json();
-    if (data && data.agents) {
-      data.agents.forEach(a => {
-        log(`${a.name}: ${a.result?.slice(0,200).replace(/\n/g,' ') || '[no output]'}`);
-      });
-      startBtn.innerText = 'Activated';
-    } else {
-      log('No agent responses returned.');
-      startBtn.innerText = 'Activate Probe AI';
-    }
-  } catch (err) {
-    log('Error: ' + err.message);
-    startBtn.innerText = 'Activate Probe AI';
-  } finally {
-    startBtn.disabled = false;
-  }
+  const R = 150; // radius
+  AGENTS.forEach((agent, i)=>{
+    const angle = (i / AGENTS.length) * Math.PI * 2;
+    const nx = Math.round(Math.cos(angle) * R);
+    const ny = Math.round(Math.sin(angle) * R);
+    const node = document.createElement('div');
+    node.className = 'node';
+    node.style.left = `calc(50% + ${nx}px)`;
+    node.style.top = `calc(50% + ${ny}px)`;
+    node.innerText = agent.split(' ')[0];
+    networkCanvas.appendChild(node);
+  });
 }
 
-startBtn.addEventListener('click', runAgents);
+// render grid view
+function renderGrid(){
+  gridEl.innerHTML = '';
+  AGENTS.forEach(agent => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="agent-title">${agent}</div><div class="agent-sub">Status: idle</div>`;
+    gridEl.appendChild(card);
+  });
+}
+
+// simulate agent activation
+function runAgents(){
+  startBtn.disabled = true;
+  startBtn.innerText = 'Activating…';
+  log('Starting all 36 agents...');
+
+  AGENTS.forEach(agent => {
+    const result = `${agent}: simulated result ready`;
+    log(result);
+    
+    // update grid card
+    const cards = gridEl.getElementsByClassName('card');
+    for (let card of cards){
+      if(card.querySelector('.agent-title').innerText === agent){
+        card.querySelector('.agent-sub').innerText = 'Status: active';
+        break;
+      }
+    }
+  });
+
+  startBtn.innerText = 'Activated';
+  startBtn.disabled = false;
+}
 
 // initial render
 renderNetwork();
 renderGrid();
+
+// attach click handler
+startBtn.addEventListener('click', runAgents);
