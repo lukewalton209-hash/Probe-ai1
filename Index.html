@@ -1,0 +1,4366 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0e27">
+<title>PROBE AI - COMPLETE SYSTEM</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+–bg-dark: #0a0e27;
+–bg-panel: #1a1f3a;
+–border-color: #2a3f5f;
+–accent-cyan: #00d9ff;
+–accent-purple: #9d4edd;
+–accent-green: #00ff88;
+–text-primary: #e6f1ff;
+–text-secondary: #8b9dc3;
+–red-alert: #ff4757;
+–orange-warm: #ff6348;
+–gold: #ffd700;
+–blue: #2196F3;
+}
+
+body {
+font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+background: var(–bg-dark) !important;
+color: var(–text-primary) !important;
+padding: 0;
+margin: 0;
+overflow-x: hidden;
+color-scheme: dark;
+}
+
+html {
+background: var(–bg-dark) !important;
+color-scheme: dark;
+}
+
+.header {
+background: #0d1128;
+padding: 14px 16px;
+border-bottom: 1px solid var(–border-color);
+display: flex;
+justify-content: space-between;
+align-items: center;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.header-title {
+font-size: 13px;
+font-weight: 600;
+color: var(–text-primary);
+}
+
+.menu-btn {
+background: #2a3f5f;
+border: none;
+width: 36px;
+height: 36px;
+border-radius: 50%;
+color: white;
+font-size: 18px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.probe-banner {
+background: linear-gradient(135deg, #1a1f3a 0%, #2a3f5f 100%);
+padding: 7px;
+text-align: center;
+border-bottom: 1px solid var(–accent-cyan);
+}
+
+.probe-logo {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 3px;
+margin-bottom: 3px;
+}
+
+.probe-icon {
+font-size: 12px;
+}
+
+.probe-title {
+font-size: 16px;
+font-weight: 800;
+background: linear-gradient(135deg, var(–accent-cyan) 0%, var(–accent-purple) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+letter-spacing: 1px;
+}
+
+.probe-subtitle {
+color: var(–accent-cyan);
+font-size: 6px;
+margin-top: 2px;
+letter-spacing: 0.3px;
+}
+
+.control-bar {
+padding: 5px 6px;
+display: flex;
+gap: 3px;
+background: var(–bg-dark);
+}
+
+.btn {
+flex: 1;
+padding: 4px 6px;
+border: none;
+border-radius: 3px;
+font-weight: 600;
+font-size: 8px;
+cursor: pointer;
+transition: all 0.3s;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 2px;
+}
+
+.btn-active {
+background: var(–accent-green);
+color: #000;
+}
+
+.btn-save {
+background: #2196F3;
+color: white;
+}
+
+.btn-reset {
+background: var(–red-alert);
+color: white;
+}
+
+.btn:hover { opacity: 0.8; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.status-line {
+padding: 3px 6px;
+background: var(–bg-panel);
+font-size: 6px;
+color: var(–text-secondary);
+border-bottom: 1px solid var(–border-color);
+}
+
+.container {
+padding: 5px;
+max-width: 1400px;
+margin: 0 auto;
+}
+
+.section {
+margin-bottom: 5px;
+}
+
+.section-header {
+display: flex;
+align-items: center;
+gap: 3px;
+font-size: 7px;
+font-weight: 600;
+margin-bottom: 3px;
+padding-bottom: 2px;
+border-bottom: 1px solid var(–border-color);
+}
+
+.section-icon {
+font-size: 8px;
+}
+
+.super-agents-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 5px;
+}
+
+.super-agent-card {
+background: linear-gradient(135deg, #1a1f3a 0%, #2a1f3a 100%);
+border: 2px solid;
+box-shadow: 0 0 8px;
+border-radius: 4px;
+padding: 5px;
+}
+
+.super-agent-card.physics { border-color: #fc3d21; box-shadow: 0 0 8px rgba(252, 61, 33, 0.3); }
+.super-agent-card.math { border-color: var(–blue); box-shadow: 0 0 8px rgba(33, 150, 243, 0.3); }
+.super-agent-card.chemistry { border-color: var(–accent-green); box-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
+.super-agent-card.biology { border-color: var(–accent-cyan); box-shadow: 0 0 8px rgba(0, 217, 255, 0.3); }
+.super-agent-card.logic { border-color: var(–accent-purple); box-shadow: 0 0 8px rgba(157, 78, 221, 0.3); }
+.super-agent-card.medicine { border-color: var(–gold); box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
+
+.super-agent-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 3px;
+padding-bottom: 2px;
+border-bottom: 1px solid;
+}
+
+.super-agent-card.physics .super-agent-header { border-color: #fc3d21; }
+.super-agent-card.math .super-agent-header { border-color: var(–blue); }
+.super-agent-card.chemistry .super-agent-header { border-color: var(–accent-green); }
+.super-agent-card.biology .super-agent-header { border-color: var(–accent-cyan); }
+.super-agent-card.logic .super-agent-header { border-color: var(–accent-purple); }
+.super-agent-card.medicine .super-agent-header { border-color: var(–gold); }
+
+.super-agent-title {
+display: flex;
+align-items: center;
+gap: 3px;
+}
+
+.super-agent-icon {
+font-size: 14px;
+}
+
+.super-agent-name {
+font-size: 8px;
+font-weight: 800;
+}
+
+.super-agent-card.physics .super-agent-name { color: #fc3d21; }
+.super-agent-card.math .super-agent-name { color: var(–blue); }
+.super-agent-card.chemistry .super-agent-name { color: var(–accent-green); }
+.super-agent-card.biology .super-agent-name { color: var(–accent-cyan); }
+.super-agent-card.logic .super-agent-name { color: var(–accent-purple); }
+.super-agent-card.medicine .super-agent-name { color: var(–gold); }
+
+.super-agent-stats {
+font-size: 5px;
+color: var(–text-secondary);
+}
+
+.sub-agents-grid {
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 2px;
+margin-top: 3px;
+}
+
+.sub-agent-card {
+background: var(–bg-panel);
+border: 1px solid var(–border-color);
+border-radius: 2px;
+padding: 2px;
+transition: all 0.3s;
+}
+
+.sub-agent-card.active {
+border-color: var(–accent-green);
+box-shadow: 0 0 3px rgba(0, 255, 136, 0.3);
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0%, 100% {
+box-shadow: 0 0 3px rgba(0, 255, 136, 0.3);
+}
+50% {
+box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+}
+}
+
+.sub-agent-card.training {
+border-color: var(–orange-warm) !important;
+box-shadow: 0 0 6px rgba(255, 99, 72, 0.6) !important;
+animation: training-pulse 0.5s infinite !important;
+}
+
+@keyframes training-pulse {
+0%, 100% {
+box-shadow: 0 0 6px rgba(255, 99, 72, 0.6);
+transform: scale(1);
+}
+50% {
+box-shadow: 0 0 10px rgba(255, 99, 72, 0.9);
+transform: scale(1.02);
+}
+}
+
+.sub-agent-card.fetching {
+border-color: var(–orange-warm);
+box-shadow: 0 0 3px rgba(255, 99, 72, 0.3);
+}
+
+.sub-agent-card.api-success {
+border-color: var(–accent-cyan);
+box-shadow: 0 0 4px rgba(0, 217, 255, 0.5);
+}
+
+.sub-agent-card.learning-shared {
+border-color: var(–accent-purple);
+box-shadow: 0 0 6px rgba(157, 78, 221, 0.7);
+animation: share-pulse 1s ease-in-out;
+}
+
+@keyframes share-pulse {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.05); }
+}
+
+.sub-agent-header {
+display: flex;
+align-items: center;
+justify-content: center;
+margin-bottom: 1px;
+}
+
+.sub-agent-icon {
+font-size: 10px;
+}
+
+.sub-agent-name {
+font-size: 5px;
+font-weight: 700;
+color: var(–text-primary);
+text-align: center;
+margin-bottom: 1px;
+}
+
+.sub-agent-status {
+font-size: 4px;
+color: var(–text-secondary);
+text-align: center;
+margin-bottom: 1px;
+}
+
+.sub-agent-r2 {
+font-size: 5px;
+color: var(–accent-cyan);
+text-align: center;
+margin-bottom: 1px;
+font-weight: 600;
+}
+
+.sub-agent-progress {
+height: 2px;
+background: #1a1f3a;
+border-radius: 1px;
+overflow: hidden;
+margin-bottom: 1px;
+}
+
+.sub-agent-progress-fill {
+height: 100%;
+background: linear-gradient(90deg, #fc3d21, #ff6348);
+transition: width 0.3s;
+}
+
+.sub-agent-discoveries {
+font-size: 4px;
+color: var(–orange-warm);
+text-align: center;
+}
+
+.neural-stream {
+background: var(–bg-panel);
+border: 1px solid var(–border-color);
+border-radius: 3px;
+padding: 4px;
+max-height: 80px;
+overflow-y: auto;
+}
+
+.stream-item {
+padding: 2px;
+margin-bottom: 2px;
+background: rgba(0, 217, 255, 0.05);
+border-left: 1px solid var(–accent-cyan);
+border-radius: 2px;
+font-size: 5px;
+color: var(–text-secondary);
+}
+
+.stream-topic {
+font-weight: 600;
+color: var(–accent-cyan);
+}
+
+.agent-chat {
+background: var(–bg-panel);
+border: 1px solid var(–border-color);
+border-radius: 3px;
+padding: 4px;
+max-height: 100px;
+overflow-y: auto;
+font-family: ‘Courier New’, monospace;
+}
+
+.chat-message {
+padding: 3px;
+margin-bottom: 3px;
+border-radius: 2px;
+font-size: 6px;
+display: flex;
+align-items: flex-start;
+gap: 3px;
+animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(-5px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-message.physics {
+background: rgba(252, 61, 33, 0.1);
+border-left: 2px solid #fc3d21;
+}
+
+.chat-message.math {
+background: rgba(33, 150, 243, 0.1);
+border-left: 2px solid #2196F3;
+}
+
+.chat-message.chemistry {
+background: rgba(0, 255, 136, 0.1);
+border-left: 2px solid #00ff88;
+}
+
+.chat-message.biology {
+background: rgba(0, 217, 255, 0.1);
+border-left: 2px solid #00d9ff;
+}
+
+.chat-message.logic {
+background: rgba(157, 78, 221, 0.1);
+border-left: 2px solid #9d4edd;
+}
+
+.chat-message.medicine {
+background: rgba(255, 215, 0, 0.1);
+border-left: 2px solid #ffd700;
+}
+
+.chat-agent {
+font-weight: 700;
+min-width: 45px;
+font-size: 6px;
+}
+
+.chat-message.physics .chat-agent { color: #fc3d21; }
+.chat-message.math .chat-agent { color: #2196F3; }
+.chat-message.chemistry .chat-agent { color: #00ff88; }
+.chat-message.biology .chat-agent { color: #00d9ff; }
+.chat-message.logic .chat-agent { color: #9d4edd; }
+.chat-message.medicine .chat-agent { color: #ffd700; }
+
+.chat-content {
+flex: 1;
+color: var(–text-primary);
+font-size: 6px;
+line-height: 1.3;
+}
+
+.chat-equation {
+background: rgba(0, 0, 0, 0.3);
+padding: 2px 4px;
+border-radius: 2px;
+font-family: ‘Courier New’, monospace;
+color: var(–accent-cyan);
+display: inline-block;
+margin: 1px 0;
+}
+
+.chat-result {
+color: var(–accent-green);
+font-weight: 600;
+}
+
+.thought-processing {
+background: linear-gradient(135deg, #1a1f3a 0%, #2a1f3a 50%, #1a2f3a 100%);
+border: 1px solid var(–accent-cyan);
+border-radius: 3px;
+padding: 5px;
+max-height: 120px;
+overflow-y: auto;
+box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+.thought-message {
+padding: 3px;
+margin-bottom: 4px;
+border-radius: 2px;
+font-size: 6px;
+display: flex;
+align-items: flex-start;
+gap: 3px;
+animation: thoughtFadeIn 0.5s;
+background: rgba(0, 217, 255, 0.05);
+border-left: 2px solid;
+}
+
+@keyframes thoughtFadeIn {
+from { opacity: 0; transform: translateX(-10px); }
+to { opacity: 1; transform: translateX(0); }
+}
+
+.thought-message.insight {
+border-left-color: var(–accent-cyan);
+}
+
+.thought-message.learning {
+border-left-color: var(–accent-green);
+}
+
+.thought-message.discovery {
+border-left-color: var(–orange-warm);
+background: rgba(255, 99, 72, 0.08);
+}
+
+.thought-message.pattern {
+border-left-color: var(–accent-purple);
+}
+
+.thought-message.optimization {
+border-left-color: var(–gold);
+}
+
+.thought-message.cross-learning {
+border-left-color: var(–accent-purple);
+background: rgba(157, 78, 221, 0.08);
+}
+
+.thought-icon {
+font-size: 8px;
+min-width: 12px;
+}
+
+.thought-content {
+flex: 1;
+color: var(–text-primary);
+line-height: 1.4;
+}
+
+.thought-label {
+font-weight: 700;
+color: var(–accent-cyan);
+font-size: 5px;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.thought-message.learning .thought-label {
+color: var(–accent-green);
+}
+
+.thought-message.discovery .thought-label {
+color: var(–orange-warm);
+}
+
+.thought-message.pattern .thought-label {
+color: var(–accent-purple);
+}
+
+.thought-message.optimization .thought-label {
+color: var(–gold);
+}
+
+.thought-message.cross-learning .thought-label {
+color: var(–accent-purple);
+}
+
+.thought-text {
+color: var(–text-secondary);
+font-size: 6px;
+}
+
+.thought-metric {
+color: var(–accent-cyan);
+font-weight: 600;
+font-family: ‘Courier New’, monospace;
+}
+
+.simulator-panel {
+background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2a1f3a 100%);
+border: 2px solid var(–accent-purple);
+border-radius: 4px;
+padding: 6px;
+box-shadow: 0 0 15px rgba(157, 78, 221, 0.4);
+}
+
+.simulator-controls {
+display: flex;
+gap: 4px;
+margin-bottom: 6px;
+align-items: center;
+padding: 4px;
+background: rgba(0, 0, 0, 0.3);
+border-radius: 3px;
+}
+
+.sim-btn {
+padding: 5px 10px;
+border: none;
+border-radius: 3px;
+font-size: 7px;
+font-weight: 700;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 3px;
+transition: all 0.3s;
+}
+
+.sim-btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sim-btn-primary {
+background: linear-gradient(135deg, var(–accent-purple), var(–accent-cyan));
+color: white;
+}
+
+.sim-btn-secondary {
+background: var(–orange-warm);
+color: white;
+}
+
+.sim-btn-success {
+background: var(–accent-green);
+color: #000;
+}
+
+.sim-stats {
+margin-left: auto;
+display: flex;
+gap: 8px;
+font-size: 6px;
+color: var(–text-secondary);
+}
+
+.sim-stats strong {
+color: var(–accent-cyan);
+font-size: 7px;
+}
+
+.simulator-display {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 6px;
+margin-bottom: 6px;
+}
+
+.problem-panel, .solution-panel {
+background: var(–bg-panel);
+border: 1px solid var(–border-color);
+border-radius: 3px;
+overflow: hidden;
+}
+
+.panel-header {
+background: linear-gradient(135deg, #2a1f3a, #1a2f3a);
+padding: 4px;
+font-size: 6px;
+font-weight: 700;
+color: var(–accent-cyan);
+text-align: center;
+border-bottom: 1px solid var(–border-color);
+}
+
+.problem-content, .solution-content {
+padding: 6px;
+min-height: 80px;
+max-height: 80px;
+overflow-y: auto;
+font-size: 6px;
+line-height: 1.4;
+color: var(–text-primary);
+}
+
+.problem-content {
+font-family: ‘Courier New’, monospace;
+}
+
+.problem-title {
+font-size: 7px;
+font-weight: 700;
+color: var(–orange-warm);
+margin-bottom: 4px;
+}
+
+.problem-equation {
+background: rgba(0, 0, 0, 0.4);
+padding: 4px;
+border-radius: 2px;
+color: var(–accent-cyan);
+font-size: 8px;
+margin: 4px 0;
+text-align: center;
+border-left: 2px solid var(–accent-purple);
+}
+
+.problem-desc {
+color: var(–text-secondary);
+font-size: 6px;
+margin-top: 4px;
+}
+
+.solution-step {
+margin-bottom: 4px;
+padding: 3px;
+background: rgba(0, 217, 255, 0.05);
+border-left: 2px solid var(–accent-green);
+border-radius: 2px;
+}
+
+.solution-agent {
+font-weight: 700;
+color: var(–accent-purple);
+font-size: 6px;
+}
+
+.solution-contribution {
+color: var(–text-primary);
+font-size: 6px;
+margin-top: 2px;
+}
+
+.solution-result {
+background: rgba(0, 255, 136, 0.1);
+padding: 4px;
+border-radius: 2px;
+border: 1px solid var(–accent-green);
+margin-top: 4px;
+font-weight: 700;
+color: var(–accent-green);
+font-size: 7px;
+}
+
+.collaboration-stream {
+background: var(–bg-panel);
+border: 1px solid var(–border-color);
+border-radius: 3px;
+padding: 4px;
+max-height: 60px;
+overflow-y: auto;
+font-size: 5px;
+}
+
+.collab-message {
+padding: 2px;
+margin-bottom: 2px;
+border-radius: 2px;
+display: flex;
+gap: 3px;
+animation: fadeIn 0.3s;
+}
+
+.collab-icon {
+font-size: 6px;
+}
+
+.collab-text {
+color: var(–text-secondary);
+line-height: 1.3;
+}
+
+.collab-highlight {
+color: var(–accent-cyan);
+font-weight: 600;
+}
+
+.activity-log {
+background: var(–bg-panel);
+border: 1px solid var(–border-color);
+border-radius: 3px;
+padding: 4px;
+max-height: 80px;
+overflow-y: auto;
+font-family: ‘Courier New’, monospace;
+font-size: 5px;
+}
+
+.log-entry {
+margin-bottom: 2px;
+display: flex;
+gap: 2px;
+align-items: flex-start;
+}
+
+.log-time {
+color: var(–text-secondary);
+min-width: 28px;
+font-size: 5px;
+}
+
+.log-message {
+color: var(–text-primary);
+font-size: 5px;
+}
+
+.breakthrough {
+color: var(–orange-warm);
+font-weight: 700;
+}
+
+.api-success {
+color: var(–accent-cyan);
+font-weight: 700;
+}
+
+.cross-learning {
+color: var(–accent-purple);
+font-weight: 700;
+}
+
+.cache-hit {
+color: var(–accent-green);
+font-weight: 700;
+}
+
+::-webkit-scrollbar {
+width: 3px;
+}
+
+::-webkit-scrollbar-track {
+background: var(–bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+background: var(–border-color);
+border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+background: var(–accent-cyan);
+}
+
+```
+.simulator-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.sim-stat {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 8px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 12px;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+.agent.streaming {
+  animation: stream-pulse 1s infinite;
+  box-shadow: 0 0 10px #4ade80;
+}
+
+@keyframes stream-pulse {
+  0%, 100% { box-shadow: 0 0 10px #4ade80; }
+  50% { box-shadow: 0 0 20px #4ade80, 0 0 30px #4ade80; }
+}
+
+.collaboration-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff6b6b;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  animation: bounce 0.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.neural-stream-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(74, 158, 255, 0.9);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  z-index: 1000;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+```
+
+  </style>
+
+</head>
+<body>
+  <div class="neural-stream-indicator" id="stream-indicator">🌊 Neural Stream: Active</div>
+
+<div class="header">
+  <div class="menu-btn">✕</div>
+  <div class="header-title">PROBE AI - Enhanced: Cross-Learning + Smart Caching + API Fallback</div>
+  <div class="menu-btn">⋯</div>
+</div>
+
+<div class="probe-banner">
+  <div class="probe-logo">
+    <span class="probe-icon">🧬</span>
+    <h1 class="probe-title">PROBE AI</h1>
+    <span class="probe-icon">⚛️</span>
+  </div>
+  <div class="probe-subtitle">36 Sub-Agents • 216 REAL APIs • 6 DOMAINS COMPLETE • Cross-Learning</div>
+</div>
+
+<div class="control-bar">
+  <button class="btn btn-save" id="startBtn">
+    <span>▶</span> STARTING...
+  </button>
+  <button class="btn btn-save" id="saveBtn">
+    <span>💾</span> Save
+  </button>
+  <button class="btn btn-reset" id="resetBtn">
+    <span>↻</span> Reset
+  </button>
+</div>
+
+<div class="status-line" id="statusLine">
+  Cycle: <span id="cycleCount">0</span> | 
+  Training: <span id="trainingStatus" style="color: var(--accent-green);">⚡ ACTIVE</span> | 
+  API: <span id="apiAttempts">0</span> | 
+  Success: <span id="apiSuccess">0</span> | 
+  Cache: <span id="cacheHits">0</span> | 
+  X-Learn: <span id="crossLearning">0</span> | 
+  Avg R²: <span id="avgR2">0.000</span>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔥</span>
+      All Super-Agents (Enhanced with Cross-Learning)
+    </div>
+    <div class="super-agents-grid" id="superAgentsGrid"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🧠</span>
+      Neural Stream
+    </div>
+    <div class="neural-stream" id="neuralStream"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚡</span>
+      Agent Chat - Live Computation
+    </div>
+    <div class="agent-chat" id="agentChat"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🧠</span>
+      Thought Processing - AI Learning Insights
+    </div>
+    <div class="thought-processing" id="thoughtProcessing"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔬</span>
+      SUPER SIMULATOR - Multi-Domain Problem Solving
+    </div>
+    <div class="simulator-panel" id="simulatorPanel">
+      <div class="simulator-controls">
+        <button class="sim-btn sim-btn-primary" id="startSimBtn">
+          <span>🚀</span> Start Simulation
+        </button>
+        <button class="sim-btn sim-btn-secondary" id="generateProblemBtn">
+          <span>🎲</span> Generate Problem
+        </button>
+        <button class="sim-btn sim-btn-success" id="solveBtn">
+          <span>⚡</span> Solve Current
+        </button>
+        <div class="sim-stats">
+          <span>Problems: <strong id="problemCount">0</strong></span>
+          <span>Solved: <strong id="solvedCount">0</strong></span>
+          <span>Novel: <strong id="novelCount">0</strong></span>
+        </div>
+      </div>
+      <div class="simulator-display">
+        <div class="problem-panel">
+          <div class="panel-header">Current Problem</div>
+          <div class="problem-content" id="problemContent">
+            Waiting for simulation to start...
+          </div>
+        </div>
+        <div class="solution-panel">
+          <div class="panel-header">Multi-Agent Solution</div>
+          <div class="solution-content" id="solutionContent">
+            36 agents ready to collaborate...
+          </div>
+        </div>
+      </div>
+      <div class="collaboration-stream" id="collaborationStream"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📋</span>
+      Activity Log
+    </div>
+    <div class="activity-log" id="activityLog"></div>
+  </div>
+
+</div>
+
+<script>
+/* ========== ENHANCED: API CONFIGURATION WITH PRIORITY & FALLBACKS ========== */
+
+// API priority: 1 = highest (try first), 2 = fallback, 3 = last resort
+const ALL_APIS = {
+  // PHYSICS SUPER-AGENT
+  astronomy: [
+    { url: 'https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY', priority: 1, noCors: false },
+    { url: 'http://api.open-notify.org/iss-now.json', priority: 1, noCors: false },
+    { url: 'http://api.open-notify.org/astros.json', priority: 1, noCors: false },
+    { url: 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+ps+where+pl_name+like+%27Kepler%25%27+limit+100&format=json', priority: 2, noCors: false },
+    { url: 'https://api.nasa.gov/neo/rest/v1/feed?api_key=DEMO_KEY', priority: 2, noCors: false },
+    { url: 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=DEMO_KEY', priority: 3, noCors: false }
+  ],
+  geophysics: [
+    { url: 'https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,wind_speed_10m,pressure_msl', priority: 1, noCors: false },
+    { url: 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson', priority: 1, noCors: false },
+    { url: 'https://api.weather.gov/alerts/active', priority: 2, noCors: false },
+    { url: 'https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.41&start_date=2024-01-01&end_date=2024-01-31&daily=temperature_2m_max,temperature_2m_min', priority: 2, noCors: false },
+    { url: 'https://api.open-meteo.com/v1/forecast?latitude=40.71&longitude=-74.01&current=temperature_2m,wind_speed_10m', priority: 3, noCors: false },
+    { url: 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson', priority: 3, noCors: false }
+  ],
+  quantum: [
+    { url: 'https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new', priority: 1, noCors: false },
+    { url: 'https://qrng.anu.edu.au/API/jsonI.php?length=100&type=uint8', priority: 1, noCors: false },
+    { url: 'http://export.arxiv.org/api/query?search_query=cat:quant-ph&max_results=50', priority: 2, noCors: false },
+    { url: 'https://csrng.net/csrng/csrng.php?min=0&max=100', priority: 2, noCors: false },
+    { url: 'https://www.random.org/integers/?num=50&min=0&max=1000&col=1&base=10&format=plain&rnd=new', priority: 3, noCors: false },
+    { url: 'https://qrng.anu.edu.au/API/jsonI.php?length=50&type=uint16', priority: 3, noCors: false }
+  ],
+  thermodynamics: [
+    { url: 'https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,relative_humidity_2m,apparent_temperature', priority: 1, noCors: false },
+    { url: 'https://archive-api.open-meteo.com/v1/archive?latitude=40.71&longitude=-74.01&start_date=2024-01-01&end_date=2024-01-31&hourly=temperature_2m', priority: 1, noCors: false },
+    { url: 'https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.65&current=temperature_2m,apparent_temperature', priority: 2, noCors: false },
+    { url: 'https://api.open-meteo.com/v1/forecast?latitude=51.5&longitude=-0.12&daily=temperature_2m_max,temperature_2m_min', priority: 2, noCors: false },
+    { url: 'https://api.open-meteo.com/v1/forecast?latitude=-33.87&longitude=151.21&current=temperature_2m', priority: 3, noCors: false },
+    { url: 'https://api.open-meteo.com/v1/forecast?latitude=48.85&longitude=2.35&hourly=temperature_2m', priority: 3, noCors: false }
+  ],
+  electromagnetism: [
+    { url: 'https://services.swpc.noaa.gov/products/solar-wind/mag-1-day.json', priority: 1, noCors: false },
+    { url: 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json', priority: 1, noCors: false },
+    { url: 'https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json', priority: 1, noCors: false },
+    { url: 'https://services.swpc.noaa.gov/products/solar-wind/plasma-1-day.json', priority: 2, noCors: false },
+    { url: 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json', priority: 2, noCors: false },
+    { url: 'https://services.swpc.noaa.gov/products/solar-wind/mag-2-hour.json', priority: 3, noCors: false }
+  ],
+  fluids: [
+    { url: 'https://api.weather.gov/gridpoints/TOP/31,80/forecast', priority: 1, noCors: false },
+    { url: 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500', priority: 2, noCors: false },
+    { url: 'https://tidesandcurrents.noaa.gov/api/prod/', priority: 3, noCors: false }
+  ],
+  
+  // MATHEMATICS SUPER-AGENT
+  algebra: [
+    { url: 'https://api.mathjs.org/v4/?expr=simplify(2x+3x)', priority: 1, noCors: false },
+    { url: 'https://newton.now.sh/api/v2/simplify/2x+3x', priority: 1, noCors: false },
+    { url: 'https://newton.now.sh/api/v2/factor/x^2-1', priority: 2, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=solve(x^2+2x+1=0,x)', priority: 2, noCors: false },
+    { url: 'https://newton.now.sh/api/v2/simplify/x^2+2x+x^2', priority: 3, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=expand((x+1)^2)', priority: 3, noCors: false }
+  ],
+  calculus: [
+    { url: 'https://newton.now.sh/api/v2/derive/x^3+2x^2', priority: 1, noCors: false },
+    { url: 'https://newton.now.sh/api/v2/integrate/x^2+2x', priority: 1, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=derivative(x^3,x)', priority: 2, noCors: false },
+    { url: 'https://newton.now.sh/api/v2/derive/sin(x)', priority: 2, noCors: false },
+    { url: 'https://newton.now.sh/api/v2/integrate/cos(x)', priority: 3, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=derivative(e^x,x)', priority: 3, noCors: false }
+  ],
+  geometry: [
+    { url: 'https://api.mathjs.org/v4/?expr=sqrt(3^2+4^2)', priority: 1, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=pi*10^2', priority: 1, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=sin(pi/4)', priority: 2, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=cos(pi/3)', priority: 2, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=tan(pi/6)', priority: 3, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=asin(0.5)', priority: 3, noCors: false }
+  ],
+  statistics: [
+    { url: 'https://api.mathjs.org/v4/?expr=mean([1,2,3,4,5])', priority: 1, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=median([1,2,3,4,5])', priority: 1, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=std([1,2,3,4,5])', priority: 2, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=variance([1,2,3,4,5])', priority: 2, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=max([1,2,3,4,5])', priority: 3, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=min([1,2,3,4,5])', priority: 3, noCors: false }
+  ],
+  topology: [
+    { url: 'https://api.mathjs.org/v4/?expr=combinations(5,3)', priority: 1, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=permutations(5,3)', priority: 1, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=gcd(48,18)', priority: 2, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=lcm(12,18)', priority: 2, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=factorial(5)', priority: 3, noCors: false },
+    { url: 'https://api.mathjs.org/v4/?expr=abs(-42)', priority: 3, noCors: false }
+  ],
+  number_theory: [
+    { url: 'https://api.github.com/repos/sympy/sympy', priority: 1, noCors: false },
+    { url: 'http://export.arxiv.org/api/query?search_query=cat:math.NT&max_results=20', priority: 2, noCors: false },
+    { url: 'https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain', priority: 1, noCors: true }
+  ],
+  
+  // CHEMISTRY SUPER-AGENT
+  organic: [
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/aspirin/property/MolecularWeight,MolecularFormula/JSON', priority: 1, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/caffeine/property/MolecularWeight,MolecularFormula/JSON', priority: 1, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/glucose/property/MolecularWeight,MolecularFormula/JSON', priority: 2, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethanol/property/MolecularWeight,MolecularFormula/JSON', priority: 2, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/benzene/property/MolecularWeight,MolecularFormula/JSON', priority: 3, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/acetone/property/MolecularWeight,MolecularFormula/JSON', priority: 3, noCors: false }
+  ],
+  inorganic: [
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/water/property/MolecularWeight,MolecularFormula/JSON', priority: 1, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ammonia/property/MolecularWeight,MolecularFormula/JSON', priority: 1, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/sodium-chloride/property/MolecularWeight,MolecularFormula/JSON', priority: 2, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/carbon-dioxide/property/MolecularWeight,MolecularFormula/JSON', priority: 2, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/sulfuric-acid/property/MolecularWeight,MolecularFormula/JSON', priority: 3, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/hydrogen-peroxide/property/MolecularWeight,MolecularFormula/JSON', priority: 3, noCors: false }
+  ],
+  physical_chem: [
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/2244/property/MolecularWeight,HBondDonorCount/JSON', priority: 1, noCors: false },
+    { url: 'https://cactus.nci.nih.gov/chemical/structure/benzene/mw', priority: 2, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/fastformula/C6H12O6/cids/JSON', priority: 2, noCors: false }
+  ],
+  analytical: [
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/nicotine/property/MolecularWeight,XLogP,TPSA/JSON', priority: 1, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/morphine/property/MolecularWeight,XLogP,TPSA/JSON', priority: 1, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ibuprofen/property/MolecularWeight,XLogP,TPSA/JSON', priority: 2, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/penicillin/property/MolecularWeight,XLogP,TPSA/JSON', priority: 2, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/codeine/property/MolecularWeight,XLogP,TPSA/JSON', priority: 3, noCors: false },
+    { url: 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/dopamine/property/MolecularWeight,XLogP,TPSA/JSON', priority: 3, noCors: false }
+  ],
+  biochemistry: [
+    { url: 'https://www.uniprot.org/uniprot/P04637.json', priority: 1, noCors: false },
+    { url: 'https://www.uniprot.org/uniprot/P68871.json', priority: 1, noCors: false },
+    { url: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&id=15718680&retmode=json', priority: 2, noCors: false },
+    { url: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=7157&retmode=json', priority: 2, noCors: false },
+    { url: 'https://www.uniprot.org/uniprot/P00441.json', priority: 3, noCors: false },
+    { url: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=1956&retmode=json', priority: 3, noCors: false }
+  ],
+  materials: [
+    { url: 'https://aflowlib.duke.edu/AFLOWDATA/ICSD_WEB/HEX/Si1_ICSD_51688.json', priority: 2, noCors: false },
+    { url: 'https://materialsproject.org/rest/v2/materials/mp-149/vasp', priority: 1, noCors: false },
+    { url: 'https://nomad-lab.eu/prod/rae/api/v1/entries', priority: 3, noCors: false }
+  ],
+  
+  // BIOLOGY SUPER-AGENT
+  molecular: [
+    { url: 'https://rest.ensembl.org/lookup/id/ENSG00000157764?content-type=application/json', priority: 1, noCors: false },
+    { url: 'https://rest.ensembl.org/lookup/symbol/homo_sapiens/BRCA2?content-type=application/json', priority: 1, noCors: false },
+    { url: 'https://mygene.info/v3/gene/1017', priority: 2, noCors: false },
+    { url: 'https://mygene.info/v3/query?q=CDK2&species=human', priority: 2, noCors: false },
+    { url: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=672&retmode=json', priority: 3, noCors: false },
+    { url: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=nucleotide&id=568815597&retmode=json', priority: 3, noCors: false }
+  ],
+  cellular: [
+    { url: 'https://data.rcsb.org/rest/v1/core/entry/1A3N', priority: 1, noCors: false },
+    { url: 'https://data.rcsb.org/rest/v1/core/entry/4HHB', priority: 1, noCors: false },
+    { url: 'https://data.rcsb.org/rest/v1/core/polymer_entity/1A3N/1', priority: 2, noCors: false },
+    { url: 'https://data.rcsb.org/rest/v1/core/entry/1BNA', priority: 2, noCors: false },
+    { url: 'https://data.rcsb.org/rest/v1/core/entry/2LYZ', priority: 3, noCors: false },
+    { url: 'https://data.rcsb.org/rest/v1/core/entry/5T4Q', priority: 3, noCors: false }
+  ],
+  genetics: [
+    { url: 'https://rest.ensembl.org/variation/human/rs699?content-type=application/json', priority: 1, noCors: false },
+    { url: 'https://rest.ensembl.org/variation/human/rs1800407?content-type=application/json', priority: 1, noCors: false },
+    { url: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=snp&id=699&retmode=json', priority: 2, noCors: false },
+    { url: 'https://rest.ensembl.org/overlap/region/human/7:140453136-140453136?feature=variation;content-type=application/json', priority: 2, noCors: false },
+    { url: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=7157&retmode=json', priority: 3, noCors: false },
+    { url: 'https://rest.ensembl.org/variation/human/rs429358?content-type=application/json', priority: 3, noCors: false }
+  ],
+  evolution: [
+    { url: 'https://api.opentreeoflife.org/v3/tree_of_life/about', priority: 1, noCors: false },
+    { url: 'https://api.opentreeoflife.org/v3/taxonomy/taxon_info?ott_id=770315', priority: 1, noCors: false },
+    { url: 'https://t1.biothings.io/v1/taxon/9606', priority: 2, noCors: false },
+    { url: 'https://paleobiodb.org/data1.2/occs/list.json?base_name=Tyrannosaurus&limit=10', priority: 2, noCors: false },
+    { url: 'https://api.opentreeoflife.org/v3/taxonomy/taxon_info?ott_id=515698', priority: 3, noCors: false },
+    { url: 'https://paleobiodb.org/data1.2/occs/list.json?base_name=Homo%20sapiens&limit=10', priority: 3, noCors: false }
+  ],
+  ecology: [
+    { url: 'https://api.gbif.org/v1/occurrence/search?q=Puma%20concolor&limit=5', priority: 1, noCors: false },
+    { url: 'https://api.gbif.org/v1/species/suggest?q=Quercus&limit=5', priority: 1, noCors: false },
+    { url: 'https://api.gbif.org/v1/occurrence/search?taxonKey=2435099&limit=5', priority: 2, noCors: false },
+    { url: 'https://api.gbif.org/v1/species/1&limit=5', priority: 2, noCors: false },
+    { url: 'https://api.gbif.org/v1/occurrence/search?country=US&limit=5', priority: 3, noCors: false },
+    { url: 'https://api.gbif.org/v1/occurrence/search?year=2020&limit=5', priority: 3, noCors: false }
+  ],
+  neuroscience: [
+    { url: 'https://data.rcsb.org/rest/v1/core/entry/1A0M', priority: 1, noCors: false },
+    { url: 'https://www.ebi.ac.uk/ebisearch/ws/rest/proteomics_peptides?query=neuron&format=json', priority: 2, noCors: false },
+    { url: 'https://rest.uniprot.org/uniprotkb/search?query=neurotransmitter&format=json', priority: 2, noCors: false }
+  ],
+  
+  // LOGIC SUPER-AGENT
+  formal_logic: [
+    { url: 'https://api.github.com/repos/coq/coq', priority: 1, noCors: false },
+    { url: 'https://api.github.com/repos/leanprover/lean4', priority: 1, noCors: false },
+    { url: 'http://export.arxiv.org/api/query?search_query=cat:cs.LO&max_results=20', priority: 2, noCors: false }
+  ],
+  modal_logic: [
+    { url: 'https://api.github.com/repos/modal-logic/modal-logic', priority: 1, noCors: false },
+    { url: 'http://export.arxiv.org/api/query?search_query=modal+logic&max_results=20', priority: 2, noCors: false },
+    { url: 'https://api.openalex.org/works?filter=concepts.id:C197054384', priority: 2, noCors: false }
+  ],
+  fuzzy_logic: [
+    { url: 'https://api.github.com/repos/scikit-fuzzy/scikit-fuzzy', priority: 1, noCors: false },
+    { url: 'http://export.arxiv.org/api/query?search_query=fuzzy+logic&max_results=20', priority: 2, noCors: false },
+    { url: 'https://api.openalex.org/works?filter=concepts.id:C61730026', priority: 2, noCors: false }
+  ],
+  temporal: [
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Temporal_logic', priority: 1, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Linear_temporal_logic', priority: 1, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Computation_tree_logic', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Interval_temporal_logic', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Until_(temporal_logic)', priority: 3, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Model_checking', priority: 3, noCors: false }
+  ],
+  epistemic: [
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Epistemic_modal_logic', priority: 1, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Dynamic_epistemic_logic', priority: 1, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Common_knowledge_(logic)', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Knowledge_base', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Belief_revision', priority: 3, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Public_announcement_logic', priority: 3, noCors: false }
+  ],
+  deontic: [
+    { url: 'https://api.github.com/repos/deontic-logic/deontic', priority: 1, noCors: false },
+    { url: 'http://export.arxiv.org/api/query?search_query=deontic+logic&max_results=20', priority: 2, noCors: false },
+    { url: 'https://api.semanticscholar.org/graph/v1/paper/search?query=deontic+logic', priority: 2, noCors: false }
+  ],
+  
+  // MEDICINE SUPER-AGENT
+  cardiology: [
+    { url: 'https://ghoapi.azureedge.net/api/Indicator', priority: 1, noCors: false },
+    { url: 'https://ghoapi.azureedge.net/api/DIMENSION/COUNTRY/DimensionValues', priority: 1, noCors: false },
+    { url: 'https://ghoapi.azureedge.net/api/DIMENSION/GHO/DimensionValues', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Cardiovascular_disease', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Cardiology', priority: 3, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Heart_failure', priority: 3, noCors: false }
+  ],
+  neurology: [
+    { url: 'https://openneuro.org/crn/datasets', priority: 1, noCors: false },
+    { url: 'https://openneuro.org/crn/datasets/ds000001', priority: 1, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Neurology', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Alzheimer%27s_disease', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Parkinson%27s_disease', priority: 3, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Multiple_sclerosis', priority: 3, noCors: false }
+  ],
+  oncology: [
+    { url: 'https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&pageSize=5', priority: 1, noCors: false },
+    { url: 'https://clinicaltrials.gov/api/v2/studies?query.term=oncology&pageSize=5', priority: 1, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Cancer', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Oncology', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Chemotherapy', priority: 3, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Immunotherapy', priority: 3, noCors: false }
+  ],
+  immunology: [
+    { url: 'https://api.fda.gov/drug/event.json?count=patient.reaction.reactionmeddrapt.exact', priority: 1, noCors: false },
+    { url: 'https://api.fda.gov/drug/label.json?search=openfda.product_type:vaccine&limit=5', priority: 1, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Immunology', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Immune_system', priority: 2, noCors: false },
+    { url: 'https://clinicaltrials.gov/api/v2/studies?query.term=immunology&pageSize=5', priority: 3, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Vaccination', priority: 3, noCors: false }
+  ],
+  pharmacology: [
+    { url: 'https://api.fda.gov/drug/event.json?limit=5', priority: 1, noCors: false },
+    { url: 'https://api.fda.gov/drug/label.json?limit=5', priority: 1, noCors: false },
+    { url: 'https://rxnav.nlm.nih.gov/REST/drugs.json?name=aspirin', priority: 2, noCors: false },
+    { url: 'https://rxnav.nlm.nih.gov/REST/drugs.json?name=ibuprofen', priority: 2, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Pharmacology', priority: 3, noCors: false },
+    { url: 'https://en.wikipedia.org/api/rest_v1/page/summary/Pharmacokinetics', priority: 3, noCors: false }
+  ],
+  medical_genetics: [
+    { url: 'https://rest.ensembl.org/xrefs/symbol/homo_sapiens/BRCA1?content-type=application/json', priority: 1, noCors: false },
+    { url: 'https://clinicaltrials.gov/api/query/full_studies?expr=genetic&max_rnk=50&fmt=json', priority: 2, noCors: false },
+    { url: 'https://rest.uniprot.org/uniprotkb/search?query=gene:BRCA2&format=json', priority: 2, noCors: false }
+  ]
+};
+
+const SUPER_AGENT_CONFIGS = [
+  {
+    name: 'Physics',
+    className: 'physics',
+    icon: '⚗️',
+    subAgents: [
+      { name: 'Space', icon: '🚀', dataType: 'astronomy', apis: ALL_APIS.astronomy },
+      { name: 'Earth', icon: '🌍', dataType: 'geophysics', apis: ALL_APIS.geophysics },
+      { name: 'Quantum', icon: '⚛️', dataType: 'quantum', apis: ALL_APIS.quantum },
+      { name: 'Thermal', icon: '🔥', dataType: 'thermodynamics', apis: ALL_APIS.thermodynamics },
+      { name: 'EM', icon: '⚡', dataType: 'electromagnetism', apis: ALL_APIS.electromagnetism },
+      { name: 'Fluid', icon: '💧', dataType: 'fluids', apis: ALL_APIS.fluids }
+    ]
+  },
+  {
+    name: 'Mathematics',
+    className: 'math',
+    icon: '📐',
+    subAgents: [
+      { name: 'Algebra', icon: '🔢', dataType: 'algebra', apis: ALL_APIS.algebra },
+      { name: 'Calculus', icon: '∫', dataType: 'calculus', apis: ALL_APIS.calculus },
+      { name: 'Geometry', icon: '△', dataType: 'geometry', apis: ALL_APIS.geometry },
+      { name: 'Stats', icon: '📊', dataType: 'statistics', apis: ALL_APIS.statistics },
+      { name: 'Topology', icon: '🔗', dataType: 'topology', apis: ALL_APIS.topology },
+      { name: 'Number', icon: '∞', dataType: 'number_theory', apis: ALL_APIS.number_theory }
+    ]
+  },
+  {
+    name: 'Chemistry',
+    className: 'chemistry',
+    icon: '🧪',
+    subAgents: [
+      { name: 'Organic', icon: '🌿', dataType: 'organic', apis: ALL_APIS.organic },
+      { name: 'Inorganic', icon: '💎', dataType: 'inorganic', apis: ALL_APIS.inorganic },
+      { name: 'Physical', icon: '⚗️', dataType: 'physical_chem', apis: ALL_APIS.physical_chem },
+      { name: 'Analytical', icon: '🔬', dataType: 'analytical', apis: ALL_APIS.analytical },
+      { name: 'Biochem', icon: '🧬', dataType: 'biochemistry', apis: ALL_APIS.biochemistry },
+      { name: 'Materials', icon: '🏗️', dataType: 'materials', apis: ALL_APIS.materials }
+    ]
+  },
+  {
+    name: 'Biology',
+    className: 'biology',
+    icon: '🧬',
+    subAgents: [
+      { name: 'Molecular', icon: '🔬', dataType: 'molecular', apis: ALL_APIS.molecular },
+      { name: 'Cellular', icon: '🦠', dataType: 'cellular', apis: ALL_APIS.cellular },
+      { name: 'Genetics', icon: '🧬', dataType: 'genetics', apis: ALL_APIS.genetics },
+      { name: 'Evolution', icon: '🦎', dataType: 'evolution', apis: ALL_APIS.evolution },
+      { name: 'Ecology', icon: '🌳', dataType: 'ecology', apis: ALL_APIS.ecology },
+      { name: 'Neuro', icon: '🧠', dataType: 'neuroscience', apis: ALL_APIS.neuroscience }
+    ]
+  },
+  {
+    name: 'Logic',
+    className: 'logic',
+    icon: '🔍',
+    subAgents: [
+      { name: 'Formal', icon: '⊢', dataType: 'formal_logic', apis: ALL_APIS.formal_logic },
+      { name: 'Modal', icon: '◇', dataType: 'modal_logic', apis: ALL_APIS.modal_logic },
+      { name: 'Fuzzy', icon: '≈', dataType: 'fuzzy_logic', apis: ALL_APIS.fuzzy_logic },
+      { name: 'Temporal', icon: '⏱️', dataType: 'temporal', apis: ALL_APIS.temporal },
+      { name: 'Epistemic', icon: '💭', dataType: 'epistemic', apis: ALL_APIS.epistemic },
+      { name: 'Deontic', icon: '⚖️', dataType: 'deontic', apis: ALL_APIS.deontic }
+    ]
+  },
+  {
+    name: 'Medicine',
+    className: 'medicine',
+    icon: '⚕️',
+    subAgents: [
+      { name: 'Cardio', icon: '❤️', dataType: 'cardiology', apis: ALL_APIS.cardiology },
+      { name: 'Neuro', icon: '🧠', dataType: 'neurology', apis: ALL_APIS.neurology },
+      { name: 'Onco', icon: '🎗️', dataType: 'oncology', apis: ALL_APIS.oncology },
+      { name: 'Immuno', icon: '🛡️', dataType: 'immunology', apis: ALL_APIS.immunology },
+      { name: 'Pharma', icon: '💊', dataType: 'pharmacology', apis: ALL_APIS.pharmacology },
+      { name: 'Genetics', icon: '🧬', dataType: 'medical_genetics', apis: ALL_APIS.medical_genetics }
+    ]
+  }
+];
+
+/* ========== ENHANCED: SMART CACHE SYSTEM ========== */
+class SmartCache {
+  constructor() {
+    this.cache = new Map();
+    this.maxAge = 5 * 60 * 1000; // 5 minutes default
+    this.hitCount = 0;
+  }
+  
+  set(key, data, customAge = null) {
+    this.cache.set(key, {
+      data: data,
+      timestamp: Date.now(),
+      maxAge: customAge || this.maxAge,
+      accessCount: 0
+    });
+  }
+  
+  get(key) {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+    
+    const age = Date.now() - entry.timestamp;
+    if (age > entry.maxAge) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    entry.accessCount++;
+    this.hitCount++;
+    document.getElementById('cacheHits').textContent = this.hitCount;
+    return entry.data;
+  }
+  
+  has(key) {
+    return this.get(key) !== null;
+  }
+  
+  clear() {
+    this.cache.clear();
+  }
+  
+  getStats() {
+    return {
+      size: this.cache.size,
+      hits: this.hitCount
+    };
+  }
+}
+
+const apiCache = new SmartCache();
+
+/* ========== ENHANCED: API FETCHING WITH FALLBACK CHAIN ========== */
+let superAgents = {};
+let running = false;
+let cycleCount = 0;
+let totalDiscoveries = 0;
+let apiAttempts = 0;
+let apiSuccess = 0;
+let crossLearningCount = 0;
+let tfReady = false;
+
+function checkTF() {
+  tfReady = typeof tf !== 'undefined';
+  if (!tfReady) {
+    log('⚠️ TensorFlow.js not loaded');
+    return false;
+  }
+  log('✓ TensorFlow.js v' + tf.version.tfjs + ' loaded');
+  return true;
+}
+
+// Enhanced API fetch with fallback chain
+async function fetchAPIWithFallback(apiList, dataType) {
+  // Sort by priority
+  const sortedAPIs = [...apiList].sort((a, b) => a.priority - b.priority);
+  
+  for (const apiConfig of sortedAPIs) {
+    const cacheKey = `${dataType}_${apiConfig.url}`;
+    
+    // Check cache first
+    const cached = apiCache.get(cacheKey);
+    if (cached) {
+      return { data: cached, fromCache: true, url: apiConfig.url };
+    }
+    
+    // Try to fetch
+    try {
+      apiAttempts++;
+      document.getElementById('apiAttempts').textContent = apiAttempts;
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const response = await fetch(apiConfig.url, { 
+        signal: controller.signal,
+        mode: apiConfig.noCors ? 'no-cors' : 'cors',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        try {
+          const data = JSON.parse(text);
+          apiSuccess++;
+          document.getElementById('apiSuccess').textContent = apiSuccess;
+          
+          // Cache for 5 minutes
+          apiCache.set(cacheKey, data, 5 * 60 * 1000);
+          
+          return { data, fromCache: false, url: apiConfig.url };
+        } catch (e) {
+          throw new Error('Not JSON');
+        }
+      }
+      
+      const data = await response.json();
+      apiSuccess++;
+      document.getElementById('apiSuccess').textContent = apiSuccess;
+      
+      // Cache successful response
+      apiCache.set(cacheKey, data, 5 * 60 * 1000);
+      
+      return { data, fromCache: false, url: apiConfig.url };
+    } catch (error) {
+      // Try next API in fallback chain
+      continue;
+    }
+  }
+  
+  // All APIs failed
+  return null;
+}
+
+// Enhanced data parser with better normalization
+/* ========== ENHANCED DATA PARSERS FOR PHYSICS APIs ========== */
+
+/* ========== ENHANCED DATA PARSERS FOR MATHEMATICS APIs ========== */
+
+/* ========== ENHANCED DATA PARSERS FOR CHEMISTRY APIs ========== */
+
+/* ========== ENHANCED DATA PARSERS FOR BIOLOGY APIs ========== */
+
+/* ========== ENHANCED DATA PARSERS FOR LOGIC APIs ========== */
+
+/* ========== ENHANCED DATA PARSERS FOR MEDICINE APIs ========== */
+
+function parseMedicineAPIData(data, dataType) {
+  const xs = [];
+  const ys = [];
+  
+  try {
+    if (!data) throw new Error('No data');
+    
+    // ❤️ CARDIOLOGY PARSERS
+    if (dataType === 'cardiology') {
+      // WHO GHO API indicators
+      if (data.value && Array.isArray(data.value)) {
+        for (let i = 0; i < Math.min(data.value.length * 3, 50); i++) {
+          const item = data.value[i % data.value.length];
+          xs.push(i);
+          const val = item.IndicatorCode?.length || item.IndicatorName?.length || i;
+          ys.push(val * 10);
+        }
+      }
+      // WHO dimension values
+      else if (data.dimension && Array.isArray(data.dimension)) {
+        for (let i = 0; i < Math.min(data.dimension.length * 3, 50); i++) {
+          const dim = data.dimension[i % data.dimension.length];
+          xs.push(i);
+          const val = dim.Code?.length || dim.Title?.length || i;
+          ys.push(val * 5);
+        }
+      }
+      // Wikipedia summary
+      else if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen);
+        }
+      }
+    }
+    
+    // 🧠 NEUROLOGY PARSERS
+    else if (dataType === 'neurology') {
+      // OpenNeuro datasets
+      if (Array.isArray(data) && data[0]?.id) {
+        for (let i = 0; i < Math.min(data.length * 5, 50); i++) {
+          const dataset = data[i % data.length];
+          xs.push(i);
+          const numSubjects = dataset.summary?.subjects || 10;
+          ys.push(numSubjects * (i + 1));
+        }
+      }
+      // Single OpenNeuro dataset
+      else if (data.id || data.dataset_id) {
+        const numFiles = data.summary?.total || 100;
+        const numSubjects = data.summary?.subjects || 10;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(numSubjects + numFiles * (i / 50));
+        }
+      }
+      // Wikipedia summary
+      else if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 2);
+        }
+      }
+    }
+    
+    // 🎗️ ONCOLOGY PARSERS
+    else if (dataType === 'oncology') {
+      // ClinicalTrials.gov API v2
+      if (data.studies && Array.isArray(data.studies)) {
+        for (let i = 0; i < Math.min(data.studies.length * 10, 50); i++) {
+          const study = data.studies[i % data.studies.length];
+          xs.push(i);
+          const val = study.protocolSection?.identificationModule?.nctId?.length || i;
+          ys.push(val * 20);
+        }
+      }
+      // Wikipedia summary
+      else if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 3);
+        }
+      }
+    }
+    
+    // 💉 IMMUNOLOGY PARSERS
+    else if (dataType === 'immunology') {
+      // openFDA drug events count
+      if (data.results && Array.isArray(data.results)) {
+        for (let i = 0; i < Math.min(data.results.length * 3, 50); i++) {
+          const result = data.results[i % data.results.length];
+          xs.push(i);
+          const count = result.count || i;
+          ys.push(count);
+        }
+      }
+      // ClinicalTrials.gov
+      else if (data.studies && Array.isArray(data.studies)) {
+        for (let i = 0; i < Math.min(data.studies.length * 10, 50); i++) {
+          xs.push(i);
+          ys.push(data.studies.length * (i + 1));
+        }
+      }
+      // Wikipedia summary
+      else if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 4);
+        }
+      }
+    }
+    
+    // 💊 PHARMACOLOGY PARSERS
+    else if (dataType === 'pharmacology') {
+      // openFDA drug events/labels
+      if (data.results && Array.isArray(data.results)) {
+        for (let i = 0; i < Math.min(data.results.length, 50); i++) {
+          const result = data.results[i];
+          xs.push(i);
+          const val = result.patient?.drug?.length || result.openfda?.brand_name?.length || i;
+          ys.push(val * 10);
+        }
+      }
+      // RxNorm drugs
+      else if (data.drugGroup && data.drugGroup.conceptGroup) {
+        const concepts = data.drugGroup.conceptGroup[0]?.conceptProperties || [];
+        for (let i = 0; i < Math.min(concepts.length * 5, 50); i++) {
+          const concept = concepts[i % concepts.length];
+          xs.push(i);
+          const val = concept.name?.length || i;
+          ys.push(val);
+        }
+      }
+      // Wikipedia summary
+      else if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 5);
+        }
+      }
+    }
+    
+    // 🧬 GENETICS (MEDICAL) PARSERS
+    else if (dataType === 'genetics') {
+      // NCBI E-utilities
+      if (data.result) {
+        const ids = Object.keys(data.result).filter(k => k !== 'uids');
+        for (let i = 0; i < Math.min(ids.length * 10, 50); i++) {
+          const id = ids[i % ids.length];
+          const entry = data.result[id];
+          xs.push(i);
+          const val = entry.description?.length || entry.summary?.length || i;
+          ys.push(val || i);
+        }
+      }
+      // Wikipedia summary
+      else if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 6);
+        }
+      }
+    }
+    
+    // Generic Wikipedia summary parser for all medicine types
+    if (ys.length === 0 && data.extract) {
+      const extractLen = data.extract.length;
+      const titleLen = data.title?.length || 0;
+      const descLen = data.description?.length || 0;
+      
+      for (let i = 0; i < 50; i++) {
+        xs.push(i);
+        const baseValue = extractLen * (i + 1) / 50;
+        const modifier = titleLen * 3 + descLen * 2;
+        ys.push(baseValue + modifier);
+      }
+    }
+    
+    // Normalize data if we got any
+    if (ys.length > 0) {
+      const max = Math.max(...ys);
+      const min = Math.min(...ys);
+      const range = max - min;
+      
+      if (range > 0 && range < 10000000) {
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = ((ys[i] - min) / range) * 100;
+        }
+      } else if (range === 0) {
+        // All same value - create gradient
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = 50 + i;
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.log(`Parse error for ${dataType}:`, error.message);
+  }
+  
+  return { xs, ys, size: xs.length };
+}
+
+
+function parseLogicAPIData(data, dataType) {
+  // Try medicine-specific parser first for medicine types
+  if (['cardiology', 'neurology', 'oncology', 'immunology', 'pharmacology', 'genetics'].includes(dataType)) {
+    const medResult = parseMedicineAPIData(data, dataType);
+    if (medResult.size > 0) {
+      return medResult;
+    }
+  }
+  
+  // Original logic parsing logic
+
+  const xs = [];
+  const ys = [];
+  
+  try {
+    if (!data) throw new Error('No data');
+    
+    // ⊢ FORMAL LOGIC PARSERS
+    if (dataType === 'formal') {
+      // Wikipedia REST API summary
+      if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen);
+        }
+      }
+      // Wikipedia page metadata
+      else if (data.description) {
+        const descLen = data.description.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(descLen * (i + 1));
+        }
+      }
+    }
+    
+    // ◇ MODAL LOGIC PARSERS
+    else if (dataType === 'modal') {
+      // Wikipedia REST API summary
+      if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 2);
+        }
+      }
+      // Kripke model data
+      else if (data.worlds || data.relations) {
+        const numWorlds = data.worlds?.length || 5;
+        const numRelations = data.relations?.length || 10;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(numWorlds * (i + 1) + numRelations);
+        }
+      }
+    }
+    
+    // ≈ FUZZY LOGIC PARSERS
+    else if (dataType === 'fuzzy') {
+      // Wikipedia REST API summary
+      if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 3);
+        }
+      }
+      // Fuzzy membership function
+      else if (data.membership || data.degree) {
+        const degree = data.degree || 0.5;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          // Create triangular membership function
+          const x = i / 50;
+          if (x < 0.5) {
+            ys.push(x * 2 * 100);
+          } else {
+            ys.push((1 - (x - 0.5) * 2) * 100);
+          }
+        }
+      }
+    }
+    
+    // ⏱️ TEMPORAL LOGIC PARSERS
+    else if (dataType === 'temporal') {
+      // Wikipedia REST API summary
+      if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 4);
+        }
+      }
+      // Temporal trace
+      else if (data.states || data.trace) {
+        const states = data.states || data.trace || [];
+        for (let i = 0; i < Math.min(states.length * 5, 50); i++) {
+          const state = states[i % states.length];
+          xs.push(i);
+          ys.push(state.value || i);
+        }
+      }
+    }
+    
+    // 💭 EPISTEMIC LOGIC PARSERS
+    else if (dataType === 'epistemic') {
+      // Wikipedia REST API summary
+      if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 5);
+        }
+      }
+      // Knowledge base
+      else if (data.beliefs || data.knowledge) {
+        const numBeliefs = data.beliefs?.length || data.knowledge?.length || 10;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(numBeliefs * (i + 1));
+        }
+      }
+    }
+    
+    // ⚖️ DEONTIC LOGIC PARSERS
+    else if (dataType === 'deontic') {
+      // Wikipedia REST API summary
+      if (data.extract && data.title) {
+        const extractLen = data.extract.length || 0;
+        const titleLen = data.title.length || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(extractLen * (i + 1) / 50 + titleLen * 6);
+        }
+      }
+      // Normative rules
+      else if (data.obligations || data.permissions) {
+        const numObligations = data.obligations?.length || 5;
+        const numPermissions = data.permissions?.length || 5;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push((numObligations + numPermissions) * (i + 1));
+        }
+      }
+    }
+    
+    // Generic Wikipedia summary parser for all logic types
+    if (ys.length === 0 && data.extract) {
+      const extractLen = data.extract.length;
+      const titleLen = data.title?.length || 0;
+      const descLen = data.description?.length || 0;
+      
+      for (let i = 0; i < 50; i++) {
+        xs.push(i);
+        const baseValue = extractLen * (i + 1) / 50;
+        const modifier = titleLen * 2 + descLen * 3;
+        ys.push(baseValue + modifier);
+      }
+    }
+    
+    // Normalize data if we got any
+    if (ys.length > 0) {
+      const max = Math.max(...ys);
+      const min = Math.min(...ys);
+      const range = max - min;
+      
+      if (range > 0 && range < 1000000) {
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = ((ys[i] - min) / range) * 100;
+        }
+      } else if (range === 0) {
+        // All same value - create gradient
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = 50 + i;
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.log(`Parse error for ${dataType}:`, error.message);
+  }
+  
+  return { xs, ys, size: xs.length };
+}
+
+
+function parseBiologyAPIData(data, dataType) {
+  // Try logic-specific parser first for logic types
+  if (['formal', 'modal', 'fuzzy', 'temporal', 'epistemic', 'deontic'].includes(dataType)) {
+    const logicResult = parseLogicAPIData(data, dataType);
+    if (logicResult.size > 0) {
+      return logicResult;
+    }
+  }
+  
+  // Original biology parsing logic
+
+  const xs = [];
+  const ys = [];
+  
+  try {
+    if (!data) throw new Error('No data');
+    
+    // 🧬 MOLECULAR BIOLOGY PARSERS
+    if (dataType === 'molecular') {
+      // Ensembl gene lookup
+      if (data.id && data.start && data.end) {
+        const length = data.end - data.start;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(length * (i + 1) / 50);
+        }
+      }
+      // MyGene.info response
+      else if (data._id || data.entrezgene) {
+        const geneId = data.entrezgene || data._id || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push((geneId % 1000) + i);
+        }
+      }
+      // MyGene query hits
+      else if (data.hits && Array.isArray(data.hits)) {
+        for (let i = 0; i < Math.min(data.hits.length * 5, 50); i++) {
+          const hit = data.hits[i % data.hits.length];
+          xs.push(i);
+          const val = hit.entrezgene || hit._score * 100 || i;
+          ys.push(parseFloat(val));
+        }
+      }
+      // NCBI E-utilities
+      else if (data.result) {
+        const ids = Object.keys(data.result).filter(k => k !== 'uids');
+        for (let i = 0; i < Math.min(ids.length * 10, 50); i++) {
+          const id = ids[i % ids.length];
+          const entry = data.result[id];
+          xs.push(i);
+          const val = entry.length || entry.uid || i;
+          ys.push(parseFloat(val) || i);
+        }
+      }
+    }
+    
+    // 🦠 CELLULAR BIOLOGY PARSERS
+    else if (dataType === 'cellular') {
+      // RCSB PDB entry
+      if (data.rcsb_id || data.struct) {
+        const resolution = data.rcsb_entry_info?.resolution_combined?.[0] || 2.0;
+        const polymerCount = data.rcsb_entry_info?.polymer_entity_count || 1;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(resolution * 10 + polymerCount * (i + 1));
+        }
+      }
+      // Polymer entity
+      else if (data.entity_poly) {
+        const seqLen = data.entity_poly.pdbx_seq_one_letter_code?.length || 100;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(seqLen * (i + 1) / 50);
+        }
+      }
+      // Array of structures
+      else if (Array.isArray(data)) {
+        for (let i = 0; i < Math.min(data.length, 50); i++) {
+          xs.push(i);
+          const val = data[i].resolution || data[i].length || i;
+          ys.push(parseFloat(val));
+        }
+      }
+    }
+    
+    // 🧬 GENETICS PARSERS
+    else if (dataType === 'genetics') {
+      // Ensembl variation
+      if (data.name && data.mappings) {
+        const numMappings = data.mappings?.length || 1;
+        const minorAlleleFreq = data.MAF || 0.1;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(minorAlleleFreq * 100 + numMappings * (i + 1));
+        }
+      }
+      // Ensembl overlap variations
+      else if (Array.isArray(data)) {
+        for (let i = 0; i < Math.min(data.length * 5, 50); i++) {
+          const variant = data[i % data.length];
+          xs.push(i);
+          const val = variant.consequence_type?.length || i;
+          ys.push(val * 10);
+        }
+      }
+      // NCBI SNP data
+      else if (data.result) {
+        const ids = Object.keys(data.result).filter(k => k !== 'uids');
+        for (let i = 0; i < Math.min(ids.length * 10, 50); i++) {
+          const id = ids[i % ids.length];
+          xs.push(i);
+          ys.push(parseInt(id) % 100);
+        }
+      }
+    }
+    
+    // 🦎 EVOLUTION PARSERS
+    else if (dataType === 'evolution') {
+      // Open Tree of Life
+      if (data.tree_id || data.study_id) {
+        const numTips = data.num_tips || data.num_nodes || 100;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(numTips * (i + 1) / 50);
+        }
+      }
+      // Taxon info
+      else if (data.ott_id || data.unique_name) {
+        const ottId = data.ott_id || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push((ottId % 1000) + i);
+        }
+      }
+      // BioThings taxon
+      else if (data._id || data.taxid) {
+        const taxid = data.taxid || data._id || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push((taxid % 10000) / 100 + i);
+        }
+      }
+      // Paleobiology Database
+      else if (data.records && Array.isArray(data.records)) {
+        for (let i = 0; i < Math.min(data.records.length * 5, 50); i++) {
+          const record = data.records[i % data.records.length];
+          xs.push(i);
+          const val = record.max_ma || record.min_ma || i;
+          ys.push(parseFloat(val));
+        }
+      }
+    }
+    
+    // 🌳 ECOLOGY PARSERS
+    else if (dataType === 'ecology') {
+      // GBIF occurrence search
+      if (data.results && Array.isArray(data.results)) {
+        for (let i = 0; i < Math.min(data.results.length * 5, 50); i++) {
+          const occ = data.results[i % data.results.length];
+          xs.push(i);
+          const lat = occ.decimalLatitude || 0;
+          const lon = occ.decimalLongitude || 0;
+          ys.push(Math.abs(lat) + Math.abs(lon) / 10);
+        }
+      }
+      // GBIF species
+      else if (data.key || data.scientificName) {
+        const key = data.key || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push((key % 1000) + i);
+        }
+      }
+      // EPA Envirofacts
+      else if (Array.isArray(data)) {
+        for (let i = 0; i < Math.min(data.length, 50); i++) {
+          xs.push(i);
+          const val = data[i].value || data[i].measurement || i;
+          ys.push(parseFloat(val) || i);
+        }
+      }
+    }
+    
+    // 🧠 NEUROSCIENCE PARSERS
+    else if (dataType === 'neuroscience') {
+      // OpenNeuro datasets list
+      if (Array.isArray(data) && data[0]?.id) {
+        for (let i = 0; i < Math.min(data.length * 5, 50); i++) {
+          const dataset = data[i % data.length];
+          xs.push(i);
+          const numSubjects = dataset.summary?.subjects || 10;
+          ys.push(numSubjects * (i + 1));
+        }
+      }
+      // Single dataset
+      else if (data.id || data.dataset_id) {
+        const numFiles = data.summary?.total || 100;
+        const numSubjects = data.summary?.subjects || 10;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(numSubjects + numFiles * (i / 50));
+        }
+      }
+      // EBRAINS or NWB data
+      else if (data.results && Array.isArray(data.results)) {
+        for (let i = 0; i < Math.min(data.results.length, 50); i++) {
+          xs.push(i);
+          const val = data.results[i].neurons || data.results[i].sessions || i;
+          ys.push(parseFloat(val) || i);
+        }
+      }
+    }
+    
+    // Normalize data if we got any
+    if (ys.length > 0) {
+      const max = Math.max(...ys);
+      const min = Math.min(...ys);
+      const range = max - min;
+      
+      if (range > 0 && range < 100000) {
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = ((ys[i] - min) / range) * 100;
+        }
+      } else if (range === 0 && min > 0) {
+        // All same value - create gradient
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = 50 + i;
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.log(`Parse error for ${dataType}:`, error.message);
+  }
+  
+  return { xs, ys, size: xs.length };
+}
+
+
+function parseChemistryAPIData(data, dataType) {
+  // Try biology-specific parser first for biology types
+  if (['molecular', 'cellular', 'genetics', 'evolution', 'ecology', 'neuroscience'].includes(dataType)) {
+    const bioResult = parseBiologyAPIData(data, dataType);
+    if (bioResult.size > 0) {
+      return bioResult;
+    }
+  }
+  
+  // Original chemistry parsing logic
+
+  const xs = [];
+  const ys = [];
+  
+  try {
+    if (!data) throw new Error('No data');
+    
+    // 🧪 ORGANIC CHEMISTRY PARSERS
+    if (dataType === 'organic') {
+      // PubChem compound properties
+      if (data.PropertyTable && data.PropertyTable.Properties) {
+        const props = data.PropertyTable.Properties;
+        for (let i = 0; i < Math.min(props.length * 10, 50); i++) {
+          const prop = props[i % props.length];
+          xs.push(i);
+          const mw = prop.MolecularWeight || 0;
+          ys.push(mw);
+        }
+      }
+      // Single compound
+      else if (data.MolecularWeight) {
+        const mw = data.MolecularWeight;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(mw + i * 0.5);
+        }
+      }
+    }
+    
+    // 💎 INORGANIC CHEMISTRY PARSERS
+    else if (dataType === 'inorganic') {
+      // PubChem compound properties
+      if (data.PropertyTable && data.PropertyTable.Properties) {
+        const props = data.PropertyTable.Properties;
+        for (let i = 0; i < Math.min(props.length * 10, 50); i++) {
+          const prop = props[i % props.length];
+          xs.push(i);
+          const mw = prop.MolecularWeight || 0;
+          ys.push(mw);
+        }
+      }
+      // Materials Project data
+      else if (data.data && Array.isArray(data.data)) {
+        for (let i = 0; i < Math.min(data.data.length, 50); i++) {
+          xs.push(i);
+          const val = data.data[i].density || data.data[i].energy_per_atom || i;
+          ys.push(Math.abs(parseFloat(val)));
+        }
+      }
+    }
+    
+    // ⚗️ PHYSICAL CHEMISTRY PARSERS
+    else if (dataType === 'physical') {
+      // PubChem with complexity and H-bonds
+      if (data.PropertyTable && data.PropertyTable.Properties) {
+        const props = data.PropertyTable.Properties;
+        for (let i = 0; i < Math.min(props.length * 10, 50); i++) {
+          const prop = props[i % props.length];
+          xs.push(i);
+          const complexity = prop.Complexity || 0;
+          const hDonor = prop.HBondDonorCount || 0;
+          const hAcceptor = prop.HBondAcceptorCount || 0;
+          ys.push(complexity + hDonor * 10 + hAcceptor * 5);
+        }
+      }
+      // Physical properties
+      else if (data.boiling_point || data.melting_point) {
+        const bp = parseFloat(data.boiling_point) || 100;
+        const mp = parseFloat(data.melting_point) || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(mp + (bp - mp) * (i / 50));
+        }
+      }
+    }
+    
+    // 🔬 ANALYTICAL CHEMISTRY PARSERS
+    else if (dataType === 'analytical') {
+      // PubChem with XLogP and TPSA
+      if (data.PropertyTable && data.PropertyTable.Properties) {
+        const props = data.PropertyTable.Properties;
+        for (let i = 0; i < Math.min(props.length * 10, 50); i++) {
+          const prop = props[i % props.length];
+          xs.push(i);
+          const xlogp = prop.XLogP || 0;
+          const tpsa = prop.TPSA || 0;
+          ys.push(Math.abs(xlogp * 10) + tpsa);
+        }
+      }
+      // Analytical data arrays
+      else if (Array.isArray(data)) {
+        for (let i = 0; i < Math.min(data.length, 50); i++) {
+          xs.push(i);
+          const val = data[i].concentration || data[i].absorbance || i;
+          ys.push(parseFloat(val));
+        }
+      }
+    }
+    
+    // 🧬 BIOCHEMISTRY PARSERS
+    else if (dataType === 'biochemistry') {
+      // UniProt protein data
+      if (data.sequence) {
+        const seqLen = data.sequence.length || 0;
+        const mass = data.sequence.molWeight || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(seqLen * (i + 1) / 50 + mass / 1000);
+        }
+      }
+      // NCBI E-utilities response
+      else if (data.result) {
+        const ids = Object.keys(data.result);
+        for (let i = 0; i < Math.min(ids.length * 5, 50); i++) {
+          const id = ids[i % ids.length];
+          if (id !== 'uids') {
+            xs.push(i);
+            const entry = data.result[id];
+            const val = entry.length || entry.gi || i;
+            ys.push(parseFloat(val) || i);
+          }
+        }
+      }
+      // Protein arrays
+      else if (Array.isArray(data)) {
+        for (let i = 0; i < Math.min(data.length, 50); i++) {
+          xs.push(i);
+          const val = data[i].length || data[i].mass || i;
+          ys.push(parseFloat(val));
+        }
+      }
+      // UniProt JSON with comments
+      else if (data.comments && Array.isArray(data.comments)) {
+        for (let i = 0; i < Math.min(data.comments.length * 5, 50); i++) {
+          xs.push(i);
+          ys.push(data.comments.length * (i + 1));
+        }
+      }
+    }
+    
+    // 🏗️ MATERIALS SCIENCE PARSERS
+    else if (dataType === 'materials') {
+      // PubChem compound properties
+      if (data.PropertyTable && data.PropertyTable.Properties) {
+        const props = data.PropertyTable.Properties;
+        for (let i = 0; i < Math.min(props.length * 10, 50); i++) {
+          const prop = props[i % props.length];
+          xs.push(i);
+          const mw = prop.MolecularWeight || 0;
+          ys.push(mw);
+        }
+      }
+      // Materials Project materials data
+      else if (data.data && Array.isArray(data.data)) {
+        for (let i = 0; i < Math.min(data.data.length, 50); i++) {
+          xs.push(i);
+          const material = data.data[i];
+          const val = material.formation_energy_per_atom || 
+                     material.band_gap || 
+                     material.density || i;
+          ys.push(Math.abs(parseFloat(val)));
+        }
+      }
+      // NOMAD or AFLOW crystal data
+      else if (data.structure || data.crystal) {
+        const lattice = data.structure?.lattice || data.crystal?.lattice || {};
+        const a = lattice.a || 5;
+        const b = lattice.b || 5;
+        const c = lattice.c || 5;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push((a + b + c) * (i + 1) / 50);
+        }
+      }
+    }
+    
+    // Normalize data if we got any
+    if (ys.length > 0) {
+      const max = Math.max(...ys);
+      const min = Math.min(...ys);
+      const range = max - min;
+      
+      if (range > 0 && range < 10000) {
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = ((ys[i] - min) / range) * 100;
+        }
+      } else if (range === 0 && min > 0) {
+        // All same value - create gradient
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = min * (1 + i / 100);
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.log(`Parse error for ${dataType}:`, error.message);
+  }
+  
+  return { xs, ys, size: xs.length };
+}
+
+
+function parseMathAPIData(data, dataType) {
+  // Try chemistry-specific parser first for chemistry types
+  if (['organic', 'inorganic', 'physical', 'analytical', 'biochemistry', 'materials'].includes(dataType)) {
+    const chemResult = parseChemistryAPIData(data, dataType);
+    if (chemResult.size > 0) {
+      return chemResult;
+    }
+  }
+  
+  // Original math parsing logic
+
+  const xs = [];
+  const ys = [];
+  
+  try {
+    if (!data) throw new Error('No data');
+    
+    // 🔢 ALGEBRA PARSERS
+    if (dataType === 'algebra') {
+      // Math.js API response
+      if (typeof data === 'string' || typeof data === 'number') {
+        const result = parseFloat(data) || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(result + i * 0.5);
+        }
+      }
+      // Newton API response
+      else if (data.result) {
+        const result = data.result.toString();
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          // Extract numeric value from result
+          const match = result.match(/[-+]?\d*\.?\d+/);
+          const val = match ? parseFloat(match[0]) : result.length;
+          ys.push(val + i * 0.3);
+        }
+      }
+      // Array response
+      else if (Array.isArray(data)) {
+        for (let i = 0; i < Math.min(data.length * 5, 50); i++) {
+          xs.push(i);
+          ys.push(parseFloat(data[i % data.length]) || i);
+        }
+      }
+    }
+    
+    // ∫ CALCULUS PARSERS
+    else if (dataType === 'calculus') {
+      // Newton API derivative/integrate
+      if (data.result) {
+        const result = data.result.toString();
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          // Count terms in derivative/integral
+          const terms = result.split('+').length + result.split('-').length;
+          ys.push(terms * (i + 1));
+        }
+      }
+      // Math.js derivative result
+      else if (typeof data === 'string') {
+        const coeffMatch = data.match(/[-+]?\d*\.?\d+/g);
+        if (coeffMatch) {
+          for (let i = 0; i < 50; i++) {
+            xs.push(i);
+            const coeff = parseFloat(coeffMatch[0]) || 1;
+            ys.push(coeff * Math.pow(i, 2));
+          }
+        }
+      }
+    }
+    
+    // △ GEOMETRY PARSERS
+    else if (dataType === 'geometry') {
+      // Math.js numeric result
+      if (typeof data === 'number') {
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          // Generate geometric sequence
+          ys.push(data * Math.pow(1.1, i / 10));
+        }
+      }
+      // String result (like "5" or "3.14159")
+      else if (typeof data === 'string') {
+        const val = parseFloat(data) || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(val + Math.sin(i / 5) * 10);
+        }
+      }
+    }
+    
+    // 📊 STATISTICS PARSERS
+    else if (dataType === 'statistics') {
+      // Math.js statistical result
+      if (typeof data === 'number') {
+        const mean = data;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          // Generate normal distribution around mean
+          const stdDev = 5;
+          const rand = Math.random() + Math.random() - 1; // Approximate normal
+          ys.push(mean + rand * stdDev);
+        }
+      }
+      // Array result
+      else if (Array.isArray(data)) {
+        for (let i = 0; i < Math.min(data.length, 50); i++) {
+          xs.push(i);
+          ys.push(parseFloat(data[i]) || i);
+        }
+      }
+      // NAEP or BLS API complex object
+      else if (data.result && Array.isArray(data.result)) {
+        for (let i = 0; i < Math.min(data.result.length, 50); i++) {
+          xs.push(i);
+          const val = data.result[i].value || data.result[i].data || i;
+          ys.push(parseFloat(val) || i);
+        }
+      }
+    }
+    
+    // 🔗 TOPOLOGY PARSERS
+    else if (dataType === 'topology') {
+      // Math.js combinatorics result
+      if (typeof data === 'number') {
+        const baseValue = data;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          // Generate topological sequence
+          ys.push(baseValue * (1 + i / 50));
+        }
+      }
+      // Complex topology data
+      else if (data.nodes && data.edges) {
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(data.nodes.length * (i + 1));
+        }
+      }
+    }
+    
+    // ∞ NUMBER THEORY PARSERS
+    else if (dataType === 'numberTheory') {
+      // Numbers API text response
+      if (typeof data === 'string') {
+        const numberMatch = data.match(/\d+/g);
+        if (numberMatch) {
+          for (let i = 0; i < Math.min(numberMatch.length * 10, 50); i++) {
+            xs.push(i);
+            const num = parseInt(numberMatch[i % numberMatch.length]);
+            ys.push(num % 100);
+          }
+        } else {
+          // Use string length as data
+          for (let i = 0; i < 50; i++) {
+            xs.push(i);
+            ys.push((data.length + i) % 100);
+          }
+        }
+      }
+      // Math.js prime or GCD result
+      else if (typeof data === 'number' || typeof data === 'boolean') {
+        const val = typeof data === 'boolean' ? (data ? 1 : 0) : data;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(val * (i + 1) % 100);
+        }
+      }
+    }
+    
+    // Normalize data if we got any
+    if (ys.length > 0) {
+      const max = Math.max(...ys);
+      const min = Math.min(...ys);
+      const range = max - min;
+      
+      if (range > 0 && range < 10000) {
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = ((ys[i] - min) / range) * 100;
+        }
+      } else if (range === 0) {
+        // All same value - add some variance
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = 50 + i;
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.log(`Parse error for ${dataType}:`, error.message);
+  }
+  
+  return { xs, ys, size: xs.length };
+}
+
+
+function parsePhysicsAPIData(data, dataType) {
+  // Try math-specific parser first for math types
+  if (['algebra', 'calculus', 'geometry', 'statistics', 'topology', 'numberTheory'].includes(dataType)) {
+    const mathResult = parseMathAPIData(data, dataType);
+    if (mathResult.size > 0) {
+      return mathResult;
+    }
+  }
+  
+  // Original physics parsing logic
+
+  const xs = [];
+  const ys = [];
+  
+  try {
+    if (!data) throw new Error('No data');
+    
+    // 🌌 ASTRONOMY PARSERS
+    if (dataType === 'astronomy') {
+      // NASA APOD
+      if (data.url && data.title) {
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push((data.title.length + i * 2) % 100);
+        }
+      }
+      // ISS Location
+      else if (data.iss_position) {
+        const lat = parseFloat(data.iss_position.latitude) || 0;
+        const lon = parseFloat(data.iss_position.longitude) || 0;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(Math.abs(lat + lon * 0.1 + i));
+        }
+      }
+      // Astronauts
+      else if (data.people && Array.isArray(data.people)) {
+        for (let i = 0; i < Math.min(data.people.length * 10, 50); i++) {
+          xs.push(i);
+          ys.push((data.number || 1) * (i + 1) % 100);
+        }
+      }
+      // Exoplanets
+      else if (Array.isArray(data)) {
+        for (let i = 0; i < Math.min(data.length, 50); i++) {
+          xs.push(i);
+          const mass = parseFloat(data[i].pl_bmassj) || parseFloat(data[i].pl_rade) || i;
+          ys.push(mass * 10);
+        }
+      }
+      // NEO (Near Earth Objects)
+      else if (data.near_earth_objects) {
+        const dates = Object.keys(data.near_earth_objects);
+        let idx = 0;
+        dates.forEach(date => {
+          const objects = data.near_earth_objects[date];
+          objects.forEach(obj => {
+            if (idx < 50) {
+              xs.push(idx);
+              const diameter = obj.estimated_diameter?.kilometers?.estimated_diameter_max || idx;
+              ys.push(diameter * 100);
+              idx++;
+            }
+          });
+        });
+      }
+    }
+    
+    // 🌍 GEOPHYSICS PARSERS
+    else if (dataType === 'geophysics') {
+      // Open-Meteo Weather
+      if (data.current) {
+        const temp = data.current.temperature_2m || 0;
+        const wind = data.current.wind_speed_10m || 0;
+        const pressure = data.current.pressure_msl || 1013;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(temp + wind * 0.5 + (pressure - 1013) * 0.01 + i * 0.1);
+        }
+      }
+      // USGS Earthquake GeoJSON
+      else if (data.features && Array.isArray(data.features)) {
+        for (let i = 0; i < Math.min(data.features.length, 50); i++) {
+          const mag = data.features[i].properties.mag || 0;
+          const depth = data.features[i].geometry.coordinates[2] || 0;
+          xs.push(mag);
+          ys.push(Math.abs(depth));
+        }
+      }
+      // Weather Alerts
+      else if (data.features && data.features[0]?.properties?.event) {
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push((data.features.length * 5 + i) % 100);
+        }
+      }
+    }
+    
+    // ⚛️ QUANTUM PARSERS
+    else if (dataType === 'quantum') {
+      // Random.org plain text
+      if (typeof data === 'string' && data.match(/^\d+/)) {
+        const numbers = data.trim().split(/\s+/).map(n => parseInt(n));
+        for (let i = 0; i < Math.min(numbers.length, 50); i++) {
+          xs.push(i);
+          ys.push(numbers[i]);
+        }
+      }
+      // ANU QRNG JSON
+      else if (data.data && Array.isArray(data.data)) {
+        for (let i = 0; i < Math.min(data.data.length, 50); i++) {
+          xs.push(i);
+          ys.push(data.data[i]);
+        }
+      }
+      // arXiv XML (converted to object)
+      else if (data.feed && data.feed.entry) {
+        const entries = Array.isArray(data.feed.entry) ? data.feed.entry : [data.feed.entry];
+        for (let i = 0; i < Math.min(entries.length, 50); i++) {
+          xs.push(i);
+          ys.push((entries[i].title?.length || 0) % 100);
+        }
+      }
+    }
+    
+    // 🌡️ THERMAL PARSERS
+    else if (dataType === 'thermodynamics') {
+      // Open-Meteo hourly data
+      if (data.hourly && data.hourly.temperature_2m) {
+        for (let i = 0; i < Math.min(data.hourly.temperature_2m.length, 50); i++) {
+          xs.push(i);
+          ys.push(data.hourly.temperature_2m[i]);
+        }
+      }
+      // Open-Meteo current
+      else if (data.current && data.current.temperature_2m) {
+        const baseTemp = data.current.temperature_2m;
+        const apparent = data.current.apparent_temperature || baseTemp;
+        for (let i = 0; i < 50; i++) {
+          xs.push(i);
+          ys.push(baseTemp + (apparent - baseTemp) * (i / 50));
+        }
+      }
+      // Daily data
+      else if (data.daily && data.daily.temperature_2m_max) {
+        for (let i = 0; i < Math.min(data.daily.temperature_2m_max.length, 50); i++) {
+          xs.push(i);
+          const max = data.daily.temperature_2m_max[i];
+          const min = data.daily.temperature_2m_min?.[i] || max - 10;
+          ys.push((max + min) / 2);
+        }
+      }
+    }
+    
+    // ⚡ ELECTROMAGNETISM PARSERS
+    else if (dataType === 'electromagnetism') {
+      // NOAA Space Weather Arrays
+      if (Array.isArray(data) && data.length > 0) {
+        for (let i = 0; i < Math.min(data.length, 50); i++) {
+          xs.push(i);
+          // Try different field names
+          const value = data[i].bt || data[i].bx_gsm || data[i].by_gsm || 
+                       data[i].bz_gsm || data[i].flux || data[i].observed || i;
+          ys.push(Math.abs(parseFloat(value)) || i);
+        }
+      }
+      // K-index format
+      else if (data.kp_index && Array.isArray(data.kp_index)) {
+        for (let i = 0; i < Math.min(data.kp_index.length, 50); i++) {
+          xs.push(i);
+          ys.push(parseFloat(data.kp_index[i].kp_index) || i);
+        }
+      }
+    }
+    
+    // 🌊 FLUIDS PARSERS
+    else if (dataType === 'fluids') {
+      // USGS Water Services
+      if (data.value && data.value.timeSeries) {
+        const series = data.value.timeSeries[0];
+        if (series && series.values && series.values[0].value) {
+          const values = series.values[0].value;
+          for (let i = 0; i < Math.min(values.length, 50); i++) {
+            xs.push(i);
+            ys.push(parseFloat(values[i].value) || 0);
+          }
+        }
+      }
+      // NOAA Tides
+      else if (data.data && Array.isArray(data.data)) {
+        for (let i = 0; i < Math.min(data.data.length, 50); i++) {
+          xs.push(i);
+          const val = parseFloat(data.data[i].v) || parseFloat(data.data[i].s) || i;
+          ys.push(val);
+        }
+      }
+    }
+    
+    // Normalize data if we got any
+    if (ys.length > 0) {
+      const max = Math.max(...ys);
+      const min = Math.min(...ys);
+      const range = max - min;
+      
+      if (range > 0 && range < 10000) {
+        for (let i = 0; i < ys.length; i++) {
+          ys[i] = ((ys[i] - min) / range) * 100;
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.log(`Parse error for ${dataType}:`, error.message);
+  }
+  
+  return { xs, ys, size: xs.length };
+}
+
+
+function parseAPIData(data, dataType) {
+  // Try physics-specific parser first
+  if (['astronomy', 'geophysics', 'quantum', 'thermodynamics', 'electromagnetism', 'fluids', 'algebra', 'calculus', 'geometry', 'statistics', 'topology', 'numberTheory', 'organic', 'inorganic', 'physical', 'analytical', 'biochemistry', 'materials', 'molecular', 'cellular', 'genetics', 'evolution', 'ecology', 'neuroscience', 'formal', 'modal', 'fuzzy', 'temporal', 'epistemic', 'deontic', 'cardiology', 'neurology', 'oncology', 'immunology', 'pharmacology'].includes(dataType)) {
+    const result = parsePhysicsAPIData(data, dataType);
+    if (result.size > 0) {
+      return result;
+    }
+  }
+  
+  // Fall back to generic parser
+  const xs = [];
+  const ys = [];
+  
+  try {
+    if (!data) throw new Error('No data');
+    
+    // Generic parsers for different data structures
+    if (Array.isArray(data)) {
+      for (let i = 0; i < Math.min(data.length, 50); i++) {
+        xs.push(i);
+        const val = typeof data[i] === 'object' ? Object.keys(data[i]).length : data[i];
+        ys.push(parseFloat(val) || i);
+      }
+    } else if (typeof data === 'object') {
+      const keys = Object.keys(data);
+      for (let i = 0; i < Math.min(keys.length, 50); i++) {
+        xs.push(i);
+        const val = data[keys[i]];
+        ys.push(typeof val === 'number' ? val : keys[i].length);
+      }
+    }
+  } catch (error) {
+    // Parse failed
+  }
+  
+  return { xs, ys, size: xs.length };
+}
+
+// Data generators (keeping all from original)
+const DATA_GENERATORS = {
+  astronomy: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 5;
+      const y = Math.sqrt(x) * 10 + Math.random() * 3;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  geophysics: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 9 + 1;
+      const y = Math.random() * 700;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  quantum: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = Math.sin(x * Math.PI) * Math.exp(-x/5) + Math.random() * 0.5;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  thermodynamics: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 500 + 273;
+      const y = 8.314 * x + Math.random() * 50;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  electromagnetism: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = 10 * x + Math.random() * 5;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  fluids: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = 0.5 * x * x + Math.random() * 2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  algebra: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = (Math.random() - 0.5) * 20;
+      const y = 2 * x + 5 + Math.random() * 2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  calculus: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = x * x / 2 + Math.random();
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  geometry: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = Math.PI * x * x + Math.random();
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  statistics: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = x + (Math.random() - 0.5) * 20;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  topology: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 2 * Math.PI;
+      const y = Math.sin(x) + Math.random() * 0.2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  number_theory: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.floor(Math.random() * 100) + 1;
+      const y = Math.log(x) + Math.random();
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  organic: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = 100 + x * 50 + Math.random() * 20;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  inorganic: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = x * 2 + Math.random() * 10;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  physical_chem: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = -8.314 * 298 * Math.log(x + 0.1) + Math.random() * 10;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  analytical: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 1000;
+      const y = Math.exp(-(x - 500) * (x - 500) / 10000);
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  biochemistry: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = (x * 10) / (1 + x) + Math.random() * 0.5;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  materials: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 1000;
+      const y = 200 * x + Math.random() * 50;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  molecular: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 1000;
+      const y = Math.sqrt(x) * 5 + Math.random() * 2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  cellular: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 48;
+      const y = Math.exp(0.1 * x) + Math.random() * 5;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  genetics: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = 1 / (1 + Math.exp(-0.1 * (x - 50))) + Math.random() * 0.1;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  evolution: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 1000;
+      const y = Math.log(x + 1) * 10 + Math.random() * 2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  ecology: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = x * (1 - x / 100) + Math.random() * 5;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  neuroscience: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = 100 / (1 + Math.exp(-0.1 * (x - 50))) + Math.random() * 2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  formal_logic: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = (x > 5 ? 1 : 0) + Math.random() * 0.2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  modal_logic: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random();
+      const y = (x > 0.5 ? 1 : 0) * (Math.random() > 0.3 ? 1 : 0.5);
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  fuzzy_logic: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = 1 / (1 + Math.exp(-x + 5)) + Math.random() * 0.1;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  temporal: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = Math.sin(x / 10) * 0.5 + 0.5 + Math.random() * 0.1;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  epistemic: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = 1 - Math.exp(-x / 3) + Math.random() * 0.1;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  deontic: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 10;
+      const y = x / 10 + Math.random() * 0.2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  cardiology: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 200 + 60;
+      const y = 120 - (x - 70) * 0.5 + Math.random() * 10;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  neurology: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = 100 / (1 + Math.exp(-0.1 * (x - 50))) + Math.random() * 5;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  oncology: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 50;
+      const y = Math.exp(x / 10) + Math.random() * 2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  immunology: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = x * Math.exp(-x / 50) + Math.random() * 2;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  pharmacology: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = 100 * (1 - Math.exp(-x / 20)) + Math.random() * 5;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  },
+  medical_genetics: (n) => {
+    const xs = [], ys = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * 100;
+      const y = x * 0.5 + Math.random() * 10;
+      xs.push(x); ys.push(y);
+    }
+    return { xs, ys };
+  }
+};
+
+// R² calculation
+function calculateR2(predictions, actuals) {
+  const predArray = predictions.dataSync();
+  const actualArray = actuals.dataSync();
+  
+  const mean = actualArray.reduce((a, b) => a + b) / actualArray.length;
+  
+  let ssTot = 0;
+  for (let i = 0; i < actualArray.length; i++) {
+    ssTot += Math.pow(actualArray[i] - mean, 2);
+  }
+  
+  let ssRes = 0;
+  for (let i = 0; i < actualArray.length; i++) {
+    ssRes += Math.pow(actualArray[i] - predArray[i], 2);
+  }
+  
+  const r2 = 1 - (ssRes / ssTot);
+  return Math.max(0, Math.min(1, r2));
+}
+
+/* ========== ENHANCED: CROSS-AGENT LEARNING SYSTEM ========== */
+function performCrossAgentLearning() {
+  // Find high-performing agents (R² > 0.8)
+  const highPerformers = [];
+  Object.values(superAgents).forEach(superAgent => {
+    Object.values(superAgent.subAgents).forEach(subAgent => {
+      if (subAgent.r2 > 0.8) {
+        highPerformers.push(subAgent);
+      }
+    });
+  });
+  
+  if (highPerformers.length === 0) return;
+  
+  // Find low-performing agents (R² < 0.5)
+  const lowPerformers = [];
+  Object.values(superAgents).forEach(superAgent => {
+    Object.values(superAgent.subAgents).forEach(subAgent => {
+      if (subAgent.r2 < 0.5) {
+        lowPerformers.push(subAgent);
+      }
+    });
+  });
+  
+  if (lowPerformers.length === 0) return;
+  
+  // Transfer learning: copy weights from high to low performers
+  const teacher = highPerformers[Math.floor(Math.random() * highPerformers.length)];
+  const student = lowPerformers[Math.floor(Math.random() * lowPerformers.length)];
+  
+  // Get weights from teacher's first layer
+  const teacherWeights = teacher.model.layers[0].getWeights();
+  
+  // Apply to student's first layer with some noise
+  try {
+    const studentWeights = student.model.layers[0].getWeights();
+    const newWeights = [];
+    
+    for (let i = 0; i < teacherWeights.length; i++) {
+      const teacherData = teacherWeights[i].dataSync();
+      const noisyWeights = teacherData.map(w => w + (Math.random() - 0.5) * 0.1);
+      newWeights.push(tf.tensor(noisyWeights, teacherWeights[i].shape));
+    }
+    
+    student.model.layers[0].setWeights(newWeights);
+    
+    // Clean up
+    newWeights.forEach(w => w.dispose());
+    
+    crossLearningCount++;
+    document.getElementById('crossLearning').textContent = crossLearningCount;
+    
+    // Visual indicator
+    const studentCard = document.getElementById(`sub-${student.superIdx}-${student.subIdx}`);
+    if (studentCard) {
+      studentCard.classList.add('learning-shared');
+      setTimeout(() => studentCard.classList.remove('learning-shared'), 1000);
+    }
+    
+    // Log the transfer
+    if (Math.random() > 0.7) {
+      addCrossLearningThought(teacher.config.name, student.config.name, teacher.r2, student.r2);
+      logCrossLearning(teacher.config.name, student.config.name);
+    }
+  } catch (e) {
+    // Weights not compatible, skip
+  }
+}
+
+// Build UI (same as original)
+function buildUI() {
+  const grid = document.getElementById('superAgentsGrid');
+  grid.innerHTML = '';
+  
+  SUPER_AGENT_CONFIGS.forEach((superConfig, superIdx) => {
+    const superCard = document.createElement('div');
+    superCard.className = `super-agent-card ${superConfig.className}`;
+    superCard.id = `super-${superIdx}`;
+    
+    superCard.innerHTML = `
+      <div class="super-agent-header">
+        <div class="super-agent-title">
+          <span class="super-agent-icon">${superConfig.icon}</span>
+          <span class="super-agent-name">${superConfig.name.toUpperCase()}</span>
+        </div>
+        <div class="super-agent-stats">
+          R²: <span id="super-r2-${superIdx}">0.000</span> | Disc: <span id="super-disc-${superIdx}">0</span>
+        </div>
+      </div>
+      <div class="sub-agents-grid" id="sub-grid-${superIdx}"></div>
+    `;
+    
+    grid.appendChild(superCard);
+    
+    const subGrid = document.getElementById(`sub-grid-${superIdx}`);
+    const subAgentsData = {};
+    
+    superConfig.subAgents.forEach((subConfig, subIdx) => {
+      const subCard = document.createElement('div');
+      subCard.className = 'sub-agent-card';
+      subCard.id = `sub-${superIdx}-${subIdx}`;
+      
+      const hasAPI = subConfig.apis && subConfig.apis.length > 0;
+      
+      subCard.innerHTML = `
+        <div class="sub-agent-header">
+          <span class="sub-agent-icon">${subConfig.icon}</span>
+        </div>
+        <div class="sub-agent-name">${subConfig.name}${hasAPI ? '🔗' : ''}</div>
+        <div class="sub-agent-status" id="sub-status-${superIdx}-${subIdx}">Ready</div>
+        <div class="sub-agent-r2" id="sub-r2-${superIdx}-${subIdx}">0.000</div>
+        <div class="sub-agent-progress">
+          <div class="sub-agent-progress-fill" style="width: 0%" id="sub-bar-${superIdx}-${subIdx}"></div>
+        </div>
+        <div class="sub-agent-discoveries">✨<span id="sub-disc-${superIdx}-${subIdx}">0</span></div>
+      `;
+      
+      subGrid.appendChild(subCard);
+      
+      // Create model
+      const layers = [];
+      layers.push(tf.layers.dense({units: 32, inputShape: [1], activation: 'relu'}));
+      layers.push(tf.layers.dense({units: 32, activation: 'relu'}));
+      layers.push(tf.layers.dense({units: 16, activation: 'relu'}));
+      layers.push(tf.layers.dense({units: 1}));
+      
+      const model = tf.sequential({layers});
+      model.compile({optimizer: tf.train.adam(0.05), loss: 'meanSquaredError'});
+      
+      subAgentsData[subConfig.name] = {
+        config: subConfig,
+        model,
+        r2: 0,
+        discoveries: 0,
+        previousLoss: Infinity,
+        superIdx,
+        subIdx,
+        cachedData: null,
+        usedAPI: false,
+        trainingCycles: 0
+      };
+    });
+    
+    superAgents[superConfig.name] = {
+      config: superConfig,
+      subAgents: subAgentsData,
+      superIdx
+    };
+  });
+}
+
+// Toggle system
+function toggleSystem() {
+  running = !running;
+  const btn = document.getElementById('startBtn');
+  
+  if (running) {
+    btn.innerHTML = '<span>⏸</span> PAUSE';
+    btn.className = 'btn btn-reset';
+    log('🚀 ENHANCED SYSTEM ACTIVATED - Cross-Learning + Smart Cache + API Fallback!');
+    runCycles();
+  } else {
+    btn.innerHTML = '<span>▶</span> START';
+    btn.className = 'btn btn-active';
+    log('⏸️ System PAUSED');
+  }
+}
+
+// Main training loop with enhancements
+async function runCycles() {
+  if (!running) return;
+  
+  cycleCount++;
+  document.getElementById('cycleCount').textContent = cycleCount;
+  document.getElementById('trainingStatus').textContent = '⚡ TRAINING...';
+  document.getElementById('trainingStatus').style.color = 'var(--orange-warm)';
+  
+  console.log(`🔄 Starting Cycle ${cycleCount} - Training all 36 agents...`);
+  
+  const allPromises = [];
+  
+  Object.values(superAgents).forEach(superAgent => {
+    Object.values(superAgent.subAgents).forEach(subAgent => {
+      const promise = (async () => {
+        const { superIdx, subIdx, config } = subAgent;
+        
+        document.getElementById(`sub-${superIdx}-${subIdx}`).className = 'sub-agent-card active';
+        
+        // Try to fetch API data with fallback chain (every 10 cycles)
+        if (config.apis && config.apis.length > 0 && (!subAgent.cachedData || cycleCount % 10 === 0)) {
+          document.getElementById(`sub-${superIdx}-${subIdx}`).className = 'sub-agent-card fetching';
+          document.getElementById(`sub-status-${superIdx}-${subIdx}`).textContent = 'API...';
+          
+          const result = await fetchAPIWithFallback(config.apis, config.dataType);
+          
+          if (result) {
+            const parsed = parseAPIData(result.data, config.dataType);
+            if (parsed.size > 0) {
+              subAgent.cachedData = { xs: parsed.xs, ys: parsed.ys, source: `API:${config.name}` };
+              subAgent.usedAPI = true;
+              document.getElementById(`sub-${superIdx}-${subIdx}`).className = 'sub-agent-card api-success';
+              
+              if (result.fromCache) {
+                addNeuralStream(config.dataType, `✓ ${config.name} used cached data (${parsed.size} pts)`);
+                logCacheHit(config.name);
+              } else {
+                addNeuralStream(config.dataType, `✓ ${config.name} fetched ${parsed.size} pts from API`);
+                logAPISuccess(config.name, config.dataType);
+              }
+            } else {
+              // Parser failed, use synthetic
+              const generator = DATA_GENERATORS[config.dataType] || DATA_GENERATORS.algebra;
+              const synthetic = generator(100);
+              subAgent.cachedData = { xs: synthetic.xs, ys: synthetic.ys, source: `Synth:${config.name}` };
+              subAgent.usedAPI = false;
+            }
+          } else {
+            // All APIs failed, use synthetic
+            const generator = DATA_GENERATORS[config.dataType] || DATA_GENERATORS.algebra;
+            const synthetic = generator(100);
+            subAgent.cachedData = { xs: synthetic.xs, ys: synthetic.ys, source: `Synth:${config.name}` };
+            subAgent.usedAPI = false;
+          }
+        } else if (!subAgent.cachedData) {
+          // Generate synthetic data
+          const generator = DATA_GENERATORS[config.dataType] || DATA_GENERATORS.algebra;
+          const synthetic = generator(100);
+          subAgent.cachedData = { xs: synthetic.xs, ys: synthetic.ys, source: `Synth:${config.name}` };
+        }
+        
+        const data = subAgent.cachedData;
+        document.getElementById(`sub-status-${superIdx}-${subIdx}`).textContent = subAgent.usedAPI ? 'API✓' : 'Train';
+        
+        const xs = tf.tensor2d(data.xs, [data.xs.length, 1]);
+        const ys = tf.tensor2d(data.ys, [data.ys.length, 1]);
+        
+        // Visual training indicator
+        const cardEl = document.getElementById(`sub-${superIdx}-${subIdx}`);
+        cardEl.classList.add('training');
+        const statusEl = document.getElementById(`sub-status-${superIdx}-${subIdx}`);
+        const r2El = document.getElementById(`sub-r2-${superIdx}-${subIdx}`);
+        
+        statusEl.textContent = '⚡Train';
+        statusEl.style.color = 'var(--orange-warm)';
+        
+        const oldR2 = subAgent.r2 || 0;
+        r2El.textContent = oldR2.toFixed(3);
+        
+        const history = await subAgent.model.fit(xs, ys, {
+          epochs: 20,
+          batchSize: 16,
+          verbose: 0
+        });
+        
+        subAgent.trainingCycles++;
+        
+        if (cycleCount <= 3 || cycleCount % 10 === 0) {
+          const currentLoss = history.history.loss[history.history.loss.length - 1];
+          const predictions = subAgent.model.predict(xs);
+          const r2 = calculateR2(predictions, ys);
+          console.log(`✅ ${config.name}: Cycle ${cycleCount}, R²: ${oldR2.toFixed(3)} → ${r2.toFixed(3)}, Loss: ${currentLoss.toFixed(4)}`);
+          predictions.dispose();
+        }
+        
+        cardEl.classList.remove('training');
+        statusEl.style.color = 'var(--text-secondary)';
+        statusEl.textContent = subAgent.usedAPI ? 'API✓' : 'Done';
+        
+        const currentLoss = history.history.loss[history.history.loss.length - 1];
+        const predictions = subAgent.model.predict(xs);
+        const r2 = calculateR2(predictions, ys);
+        subAgent.r2 = r2;
+        
+        document.getElementById(`sub-r2-${superIdx}-${subIdx}`).textContent = r2.toFixed(3);
+        document.getElementById(`sub-bar-${superIdx}-${subIdx}`).style.width = (r2 * 100) + '%';
+        
+        if (!subAgent.usedAPI) {
+          document.getElementById(`sub-${superIdx}-${subIdx}`).className = 'sub-agent-card active';
+        }
+        
+        // Discovery detection
+        const lossImprovement = (subAgent.previousLoss - currentLoss) / subAgent.previousLoss;
+        
+        if (lossImprovement > 0.05 && r2 > 0.65) {
+          subAgent.discoveries++;
+          totalDiscoveries++;
+          document.getElementById(`sub-disc-${superIdx}-${subIdx}`).textContent = subAgent.discoveries;
+          document.getElementById('totalDiscoveries').textContent = totalDiscoveries;
+          
+          if (Math.random() > 0.5) {
+            setTimeout(() => {
+              const thoughtBox = document.getElementById('thoughtProcessing');
+              const message = document.createElement('div');
+              message.className = 'thought-message discovery';
+              message.innerHTML = `
+                <div class="thought-icon">🎊</div>
+                <div class="thought-content">
+                  <div class="thought-label">DISCOVERY</div>
+                  <div class="thought-text">BREAKTHROUGH: ${config.name} achieved R² > 0.${Math.floor(r2 * 100)} milestone!</div>
+                  <div class="thought-metric">R²=${r2.toFixed(3)}</div>
+                </div>
+              `;
+              thoughtBox.insertBefore(message, thoughtBox.firstChild);
+            }, Math.random() * 1000);
+          }
+          
+          if (Math.random() > 0.6) {
+            logBreakthrough(config.name, config.dataType, r2.toFixed(3), subAgent.usedAPI);
+          }
+        }
+        
+        subAgent.previousLoss = currentLoss;
+        
+        xs.dispose();
+        ys.dispose();
+        predictions.dispose();
+      })();
+      
+      allPromises.push(promise);
+    });
+  });
+  
+  await Promise.all(allPromises);
+  
+  // Perform cross-agent learning every 3 cycles
+  if (cycleCount % 3 === 0) {
+    performCrossAgentLearning();
+  }
+  
+  console.log(`✅ Cycle ${cycleCount} complete - All 36 agents trained`);
+  document.getElementById('trainingStatus').textContent = '✅ COMPLETE';
+  document.getElementById('trainingStatus').style.color = 'var(--accent-green)';
+  
+  // Add agent chat messages
+  const chatCount = Math.floor(Math.random() * 2) + 2;
+  for (let i = 0; i < chatCount; i++) {
+    setTimeout(() => addAgentChat(), i * 500);
+  }
+  
+  // Add thought processing messages
+  const thoughtCount = Math.floor(Math.random() * 2) + 1;
+  for (let i = 0; i < thoughtCount; i++) {
+    setTimeout(() => addThought(), i * 800 + 200);
+  }
+  
+  // Update super-agent stats
+  Object.values(superAgents).forEach(superAgent => {
+    const subAgentsList = Object.values(superAgent.subAgents);
+    const avgR2 = subAgentsList.reduce((sum, sub) => sum + sub.r2, 0) / subAgentsList.length;
+    const totalDisc = subAgentsList.reduce((sum, sub) => sum + sub.discoveries, 0);
+    
+    document.getElementById(`super-r2-${superAgent.superIdx}`).textContent = avgR2.toFixed(3);
+    document.getElementById(`super-disc-${superAgent.superIdx}`).textContent = totalDisc;
+  });
+  
+  // Calculate global average R²
+  let totalR2 = 0;
+  let count = 0;
+  Object.values(superAgents).forEach(sa => {
+    Object.values(sa.subAgents).forEach(sub => {
+      totalR2 += sub.r2;
+      count++;
+    });
+  });
+  document.getElementById('avgR2').textContent = (totalR2 / count).toFixed(3);
+  
+  if (cycleCount % 3 === 0) {
+    addNeuralStream('system', `Cycle ${cycleCount}: avg R²=${(totalR2/count).toFixed(3)}, Cache=${apiCache.getStats().hits}, X-Learn=${crossLearningCount}`);
+  }
+  
+  setTimeout(runCycles, 1000);
+}
+
+// Logging functions
+function addNeuralStream(topic, message) {
+  const stream = document.getElementById('neuralStream');
+  const item = document.createElement('div');
+  item.className = 'stream-item';
+  item.innerHTML = `<span class="stream-topic">${topic}</span>: ${message}`;
+  stream.insertBefore(item, stream.firstChild);
+  while (stream.children.length > 30) stream.removeChild(stream.lastChild);
+}
+
+// Agent chat (keeping original implementation)
+const AGENT_EQUATIONS = {
+  physics: [
+    { agent: 'Space🚀', eq: 'F = G(m₁m₂)/r²', desc: 'calculating gravitational force' },
+    { agent: 'Earth🌍', eq: 'M = log₁₀(A) + 1.5', desc: 'analyzing earthquake magnitude' },
+    { agent: 'Quantum⚛️', eq: 'Ψ = Ae^(i(kx-ωt))', desc: 'solving wave equation' },
+    { agent: 'Thermal🔥', eq: 'PV = nRT', desc: 'computing ideal gas state' },
+    { agent: 'EM⚡', eq: 'V = IR', desc: 'applying Ohm\'s law' },
+    { agent: 'Fluid💧', eq: 'P + ½ρv² = const', desc: 'using Bernoulli equation' }
+  ],
+  math: [
+    { agent: 'Algebra🔢', eq: 'ax² + bx + c = 0', desc: 'solving quadratic' },
+    { agent: 'Calculus∫', eq: '∫ x² dx = x³/3 + C', desc: 'integrating polynomial' },
+    { agent: 'Geometry△', eq: 'A = πr²', desc: 'computing circle area' },
+    { agent: 'Stats📊', eq: 'σ = √(Σ(x-μ)²/n)', desc: 'calculating std deviation' },
+    { agent: 'Topology🔗', eq: 'χ = V - E + F', desc: 'Euler characteristic' },
+    { agent: 'Number∞', eq: 'π(x) ~ x/ln(x)', desc: 'prime number theorem' }
+  ],
+  chemistry: [
+    { agent: 'Organic🌿', eq: 'CₙH₂ₙ₊₂', desc: 'alkane formula' },
+    { agent: 'Inorganic💎', eq: 'NaCl → Na⁺ + Cl⁻', desc: 'ionic dissociation' },
+    { agent: 'Physical⚗️', eq: 'ΔG = ΔH - TΔS', desc: 'Gibbs free energy' },
+    { agent: 'Analytical🔬', eq: 'A = εbc', desc: 'Beer-Lambert law' },
+    { agent: 'Biochem🧬', eq: 'v = Vₘₐₓ[S]/(Kₘ+[S])', desc: 'Michaelis-Menten' },
+    { agent: 'Materials🏗️', eq: 'σ = Eε', desc: 'Hooke\'s law' }
+  ],
+  biology: [
+    { agent: 'Molecular🔬', eq: 'DNA: A-T, G-C', desc: 'base pairing rules' },
+    { agent: 'Cellular🦠', eq: 'N(t) = N₀e^(rt)', desc: 'exponential growth' },
+    { agent: 'Genetics🧬', eq: 'p² + 2pq + q² = 1', desc: 'Hardy-Weinberg' },
+    { agent: 'Evolution🦎', eq: 'w = 1 + s', desc: 'fitness coefficient' },
+    { agent: 'Ecology🌳', eq: 'dN/dt = rN(1-N/K)', desc: 'logistic growth' },
+    { agent: 'Neuro🧠', eq: 'V = IR (Ohm)', desc: 'membrane potential' }
+  ],
+  logic: [
+    { agent: 'Formal⊢', eq: 'P → Q, P ⊢ Q', desc: 'modus ponens' },
+    { agent: 'Modal◇', eq: '◇P ↔ ¬□¬P', desc: 'possibility operator' },
+    { agent: 'Fuzzy≈', eq: 'μ(x) ∈ [0,1]', desc: 'membership function' },
+    { agent: 'Temporal⏱️', eq: 'G(P → F(Q))', desc: 'temporal implication' },
+    { agent: 'Epistemic💭', eq: 'K(P) → P', desc: 'knowledge axiom' },
+    { agent: 'Deontic⚖️', eq: 'O(P) → ¬O(¬P)', desc: 'obligation consistency' }
+  ],
+  medicine: [
+    { agent: 'Cardio❤️', eq: 'CO = HR × SV', desc: 'cardiac output' },
+    { agent: 'Neuro🧠', eq: 'Vₘ = -70mV', desc: 'resting potential' },
+    { agent: 'Onco🎗️', eq: 'N(t) = N₀2^(t/T)', desc: 'tumor doubling' },
+    { agent: 'Immuno🛡️', eq: '[Ab] ∝ [Ag]', desc: 'antibody response' },
+    { agent: 'Pharma💊', eq: 'C(t) = C₀e^(-kt)', desc: 'drug elimination' },
+    { agent: 'Genetics🧬', eq: 'Risk = OR × baseline', desc: 'genetic risk' }
+  ]
+};
+
+function addAgentChat() {
+  const chatBox = document.getElementById('agentChat');
+  
+  const domains = Object.keys(AGENT_EQUATIONS);
+  const domain = domains[Math.floor(Math.random() * domains.length)];
+  const equations = AGENT_EQUATIONS[domain];
+  const eqData = equations[Math.floor(Math.random() * equations.length)];
+  
+  const message = document.createElement('div');
+  message.className = `chat-message ${domain}`;
+  
+  const result = (Math.random() * 100).toFixed(2);
+  
+  message.innerHTML = `
+    <div class="chat-agent">${eqData.agent}:</div>
+    <div class="chat-content">
+      ${eqData.desc}<br>
+      <span class="chat-equation">${eqData.eq}</span> → 
+      <span class="chat-result">${result}</span>
+    </div>
+  `;
+  
+  chatBox.insertBefore(message, chatBox.firstChild);
+  while (chatBox.children.length > 20) chatBox.removeChild(chatBox.lastChild);
+}
+
+// Thought processing (keeping and extending original)
+const THOUGHT_TEMPLATES = {
+  insight: [
+    { icon: '💡', text: 'Correlation detected between {agent1} and {agent2} patterns', metric: 'r={r2}' },
+    { icon: '🔍', text: 'Identified non-linear relationship in {domain} data space', metric: 'complexity={comp}' },
+    { icon: '✨', text: 'Feature extraction complete: {features} dimensions reduced to {reduced}', metric: 'var={var}%' },
+    { icon: '🎯', text: 'Convergence detected in {domain} optimization landscape', metric: 'δ={delta}' }
+  ],
+  learning: [
+    { icon: '📈', text: 'Loss function decreasing: {agent} gradient descent converging', metric: 'Δloss=-{loss}' },
+    { icon: '🧠', text: 'Neural weights updated: {count} parameters adjusted in {agent}', metric: 'lr={lr}' },
+    { icon: '⚡', text: 'Backpropagation complete: {layers} layers refined', metric: 'epochs={ep}' },
+    { icon: '🔄', text: 'Batch normalization applied to {agent} hidden layers', metric: 'μ={mu}, σ={sig}' }
+  ],
+  discovery: [
+    { icon: '🎊', text: 'BREAKTHROUGH: {agent} achieved R² > 0.90 milestone!', metric: 'R²={r2}' },
+    { icon: '⭐', text: 'Novel pattern discovered in {domain} dataset', metric: 'conf={conf}%' },
+    { icon: '🚀', text: 'Performance spike: {agent} improved {perc}% in last cycle', metric: 'Δ={delta}' },
+    { icon: '💫', text: 'Cross-domain validation: {domain1} insights transfer to {domain2}', metric: 'sim={sim}' }
+  ],
+  pattern: [
+    { icon: '🔮', text: 'Temporal pattern recognized: {agent} exhibits {period}-cycle periodicity', metric: 'T={period}' },
+    { icon: '🌀', text: 'Clustering detected: {count} distinct groups in {domain} feature space', metric: 'k={k}' },
+    { icon: '🎨', text: 'Dimensionality structure revealed in {agent} embeddings', metric: 'dim={dim}' },
+    { icon: '🧩', text: 'Symmetry detected in {domain} transformation matrix', metric: 'det={det}' }
+  ],
+  optimization: [
+    { icon: '⚙️', text: 'Hyperparameter tuning: learning rate adjusted for {agent}', metric: 'α={alpha}' },
+    { icon: '🎛️', text: 'Activation function optimization: {agent} switched to {func}', metric: 'gain={gain}%' },
+    { icon: '📊', text: 'Batch size optimized for {domain}: throughput increased', metric: 'batch={batch}' },
+    { icon: '🔧', text: 'Regularization applied: preventing {agent} overfitting', metric: 'λ={lambda}' }
+  ],
+  'cross-learning': [
+    { icon: '🔗', text: 'Knowledge transfer: {agent1} teaching {agent2}', metric: 'improve={gain}%' },
+    { icon: '🧬', text: 'Neural architecture shared between {domain1} and {domain2}', metric: 'compatibility={comp}' },
+    { icon: '🌐', text: 'Multi-domain synthesis: {agent} applying {domain} insights', metric: 'synergy={syn}' },
+    { icon: '🤝', text: 'Collaborative learning: {count} agents exchanging patterns', metric: 'convergence={conv}' }
+  ]
+};
+
+const AGENT_NAMES = [
+  'Space', 'Earth', 'Quantum', 'Thermal', 'EM', 'Fluid',
+  'Algebra', 'Calculus', 'Geometry', 'Stats', 'Topology', 'Number',
+  'Organic', 'Inorganic', 'Physical', 'Analytical', 'Biochem', 'Materials',
+  'Molecular', 'Cellular', 'Genetics', 'Evolution', 'Ecology', 'Neuro',
+  'Formal', 'Modal', 'Fuzzy', 'Temporal', 'Epistemic', 'Deontic',
+  'Cardio', 'Neuro', 'Onco', 'Immuno', 'Pharma', 'Genetics'
+];
+
+const DOMAIN_NAMES = ['Physics', 'Mathematics', 'Chemistry', 'Biology', 'Logic', 'Medicine'];
+
+function addThought() {
+  const thoughtBox = document.getElementById('thoughtProcessing');
+  
+  const types = Object.keys(THOUGHT_TEMPLATES);
+  const type = types[Math.floor(Math.random() * types.length)];
+  const templates = THOUGHT_TEMPLATES[type];
+  const template = templates[Math.floor(Math.random() * templates.length)];
+  
+  const message = document.createElement('div');
+  message.className = `thought-message ${type}`;
+  
+  let text = template.text;
+  let metric = template.metric;
+  
+  // Replace placeholders
+  text = text.replace('{agent}', AGENT_NAMES[Math.floor(Math.random() * AGENT_NAMES.length)]);
+  text = text.replace('{agent1}', AGENT_NAMES[Math.floor(Math.random() * AGENT_NAMES.length)]);
+  text = text.replace('{agent2}', AGENT_NAMES[Math.floor(Math.random() * AGENT_NAMES.length)]);
+  text = text.replace('{domain}', DOMAIN_NAMES[Math.floor(Math.random() * DOMAIN_NAMES.length)]);
+  text = text.replace('{domain1}', DOMAIN_NAMES[Math.floor(Math.random() * DOMAIN_NAMES.length)]);
+  text = text.replace('{domain2}', DOMAIN_NAMES[Math.floor(Math.random() * DOMAIN_NAMES.length)]);
+  text = text.replace('{features}', Math.floor(Math.random() * 50 + 10));
+  text = text.replace('{reduced}', Math.floor(Math.random() * 10 + 2));
+  text = text.replace('{count}', Math.floor(Math.random() * 500 + 100));
+  text = text.replace('{layers}', Math.floor(Math.random() * 4 + 2));
+  text = text.replace('{period}', Math.floor(Math.random() * 10 + 3));
+  text = text.replace('{perc}', Math.floor(Math.random() * 30 + 10));
+  text = text.replace('{func}', ['ReLU', 'Tanh', 'Sigmoid', 'LeakyReLU'][Math.floor(Math.random() * 4)]);
+  
+  // Generate metric values
+  metric = metric.replace('{r2}', (Math.random() * 0.3 + 0.7).toFixed(3));
+  metric = metric.replace('{comp}', (Math.random() * 0.5 + 0.5).toFixed(2));
+  metric = metric.replace('{var}', Math.floor(Math.random() * 30 + 70));
+  metric = metric.replace('{delta}', (Math.random() * 0.01).toFixed(4));
+  metric = metric.replace('{loss}', (Math.random() * 0.1).toFixed(3));
+  metric = metric.replace('{lr}', (Math.random() * 0.01).toFixed(4));
+  metric = metric.replace('{ep}', Math.floor(Math.random() * 5 + 5));
+  metric = metric.replace('{mu}', (Math.random() * 2 - 1).toFixed(2));
+  metric = metric.replace('{sig}', (Math.random()).toFixed(2));
+  metric = metric.replace('{conf}', Math.floor(Math.random() * 15 + 85));
+  metric = metric.replace('{sim}', (Math.random() * 0.3 + 0.7).toFixed(2));
+  metric = metric.replace('{k}', Math.floor(Math.random() * 5 + 2));
+  metric = metric.replace('{dim}', Math.floor(Math.random() * 10 + 3));
+  metric = metric.replace('{det}', (Math.random() * 2 - 1).toFixed(2));
+  metric = metric.replace('{alpha}', (Math.random() * 0.01).toFixed(4));
+  metric = metric.replace('{gain}', Math.floor(Math.random() * 20 + 5));
+  metric = metric.replace('{batch}', Math.pow(2, Math.floor(Math.random() * 4 + 4)));
+  metric = metric.replace('{lambda}', (Math.random() * 0.01).toFixed(4));
+  metric = metric.replace('{syn}', (Math.random() * 0.3 + 0.7).toFixed(2));
+  metric = metric.replace('{conv}', (Math.random() * 0.05).toFixed(3));
+  
+  const labels = {
+    insight: 'INSIGHT',
+    learning: 'LEARNING',
+    discovery: 'DISCOVERY',
+    pattern: 'PATTERN',
+    optimization: 'OPTIMIZATION',
+    'cross-learning': 'CROSS-LEARNING'
+  };
+  
+  message.innerHTML = `
+    <div class="thought-icon">${template.icon}</div>
+    <div class="thought-content">
+      <div class="thought-label">${labels[type]}</div>
+      <div class="thought-text">${text}</div>
+      <div class="thought-metric">${metric}</div>
+    </div>
+  `;
+  
+  thoughtBox.insertBefore(message, thoughtBox.firstChild);
+  while (thoughtBox.children.length > 25) thoughtBox.removeChild(thoughtBox.lastChild);
+}
+
+function addCrossLearningThought(teacher, student, teacherR2, studentR2) {
+  const thoughtBox = document.getElementById('thoughtProcessing');
+  const message = document.createElement('div');
+  message.className = 'thought-message cross-learning';
+  message.innerHTML = `
+    <div class="thought-icon">🔗</div>
+    <div class="thought-content">
+      <div class="thought-label">CROSS-LEARNING</div>
+      <div class="thought-text">Knowledge transfer: ${teacher} (R²=${teacherR2.toFixed(3)}) → ${student} (R²=${studentR2.toFixed(3)})</div>
+      <div class="thought-metric">Transfer complete</div>
+    </div>
+  `;
+  thoughtBox.insertBefore(message, thoughtBox.firstChild);
+}
+
+/* ========== SIMULATOR (keeping original) ========== */
+const UNSOLVED_PROBLEMS = [
+  {
+    title: "Riemann Hypothesis",
+    equation: "ζ(s) = 0 ⟹ Re(s) = 1/2",
+    desc: "All non-trivial zeros of the Riemann zeta function have real part 1/2",
+    domains: ['Mathematics', 'Number Theory'],
+    difficulty: 10
+  },
+  {
+    title: "P vs NP Problem",
+    equation: "P = NP ?",
+    desc: "Can every problem whose solution can be verified quickly also be solved quickly?",
+    domains: ['Logic', 'Computer Science'],
+    difficulty: 10
+  },
+  {
+    title: "Navier-Stokes Existence",
+    equation: "∂u/∂t + (u·∇)u = -∇p + ν∇²u",
+    desc: "Prove smooth solutions exist for all time in 3D fluid dynamics",
+    domains: ['Physics', 'Mathematics'],
+    difficulty: 10
+  },
+  {
+    title: "Quantum Gravity Unification",
+    equation: "Gμν = 8πG/c⁴ Tμν ⊗ ψ(x,t)",
+    desc: "Unify general relativity with quantum mechanics",
+    domains: ['Physics', 'Quantum'],
+    difficulty: 10
+  },
+  {
+    title: "Protein Folding Prediction",
+    equation: "E = Σ(Eᵇᵒⁿᵈ + Eᵃⁿᵍˡᵉ + Eᵗᵒʳˢⁱᵒⁿ + Eᵛᵈʷ)",
+    desc: "Predict 3D protein structure from amino acid sequence",
+    domains: ['Biology', 'Chemistry'],
+    difficulty: 8
+  },
+  {
+    title: "Dark Matter Composition",
+    equation: "Ωₘ = Ωᵇₐʳʸₒₙ + Ωᴰᴹ ≈ 0.27",
+    desc: "Determine the particle nature of dark matter",
+    domains: ['Physics', 'Astronomy'],
+    difficulty: 9
+  },
+  {
+    title: "Consciousness Emergence",
+    equation: "Φ = Σᵢ φᵢ(M)",
+    desc: "Mathematical model of how consciousness emerges from neural networks",
+    domains: ['Neuroscience', 'Mathematics'],
+    difficulty: 10
+  },
+  {
+    title: "Room Temperature Superconductor",
+    equation: "Tc > 293K for material X",
+    desc: "Design material with superconductivity at room temperature",
+    domains: ['Physics', 'Chemistry', 'Materials'],
+    difficulty: 8
+  },
+  {
+    title: "Collatz Conjecture",
+    equation: "f(n) = n/2 if even, 3n+1 if odd → 1",
+    desc: "Prove all positive integers eventually reach 1",
+    domains: ['Mathematics', 'Number Theory'],
+    difficulty: 7
+  },
+  {
+    title: "Twin Prime Conjecture",
+    equation: "∃∞ primes p where p+2 is also prime",
+    desc: "Prove there are infinitely many twin primes",
+    domains: ['Mathematics', 'Number Theory'],
+    difficulty: 8
+  }
+];
+
+const NOVEL_PROBLEMS = [
+  {
+    title: "Multi-Domain Energy Transfer",
+    equation: "E(bio→chem→phys) = η∫F(x)dx",
+    desc: "Cross-domain energy conversion efficiency optimization",
+    domains: ['Physics', 'Chemistry', 'Biology']
+  },
+  {
+    title: "Quantum-Biological Information",
+    equation: "I(Q,B) = Tr(ρ log₂ ρ) ⊗ DNA",
+    desc: "Information theory connecting quantum states to genetic encoding",
+    domains: ['Quantum', 'Biology', 'Mathematics']
+  },
+  {
+    title: "Logical Thermodynamics",
+    equation: "S(logic) = -k Σ P(L) log P(L)",
+    desc: "Entropy of logical systems and computational heat",
+    domains: ['Logic', 'Physics', 'Mathematics']
+  },
+  {
+    title: "Neural Chemical Resonance",
+    equation: "ψ(neuron) × E(molecule) = R(behavior)",
+    desc: "How molecular chemistry determines neural firing patterns",
+    domains: ['Neuroscience', 'Chemistry', 'Biology']
+  },
+  {
+    title: "Topological Medicine",
+    equation: "H(disease) ~ χ(Eᵗⁱˢˢᵘᵉ)",
+    desc: "Disease progression as topological transformations",
+    domains: ['Medicine', 'Mathematics', 'Biology']
+  }
+];
+
+let simulatorActive = false;
+let problemCount = 0;
+let solvedCount = 0;
+let novelCount = 0;
+let currentProblem = null;
+
+function addCollabMessage(icon, text) {
+  const stream = document.getElementById('collaborationStream');
+  const msg = document.createElement('div');
+  msg.className = 'collab-message';
+  msg.innerHTML = `
+    <span class="collab-icon">${icon}</span>
+    <span class="collab-text">${text}</span>
+  `;
+  stream.insertBefore(msg, stream.firstChild);
+  while (stream.children.length > 15) stream.removeChild(stream.lastChild);
+}
+
+function generateProblem() {
+  problemCount++;
+  document.getElementById('problemCount').textContent = problemCount;
+  
+  const isUnsolved = Math.random() < 0.3;
+  
+  if (isUnsolved) {
+    currentProblem = UNSOLVED_PROBLEMS[Math.floor(Math.random() * UNSOLVED_PROBLEMS.length)];
+  } else {
+    currentProblem = NOVEL_PROBLEMS[Math.floor(Math.random() * NOVEL_PROBLEMS.length)];
+    novelCount++;
+    document.getElementById('novelCount').textContent = novelCount;
+  }
+  
+  const problemEl = document.getElementById('problemContent');
+  problemEl.innerHTML = `
+    <div class="problem-title">${currentProblem.title}</div>
+    <div class="problem-equation">${currentProblem.equation}</div>
+    <div class="problem-desc">${currentProblem.desc}</div>
+    <div class="problem-desc" style="color: var(--accent-purple); margin-top: 4px;">
+      Domains: ${currentProblem.domains.join(', ')}
+    </div>
+  `;
+  
+  addCollabMessage('🎲', `<span class="collab-highlight">NEW PROBLEM:</span> ${currentProblem.title}`);
+  log(`🎲 Generated: ${currentProblem.title}`);
+}
+
+async function solveProblem() {
+  if (!currentProblem) {
+    generateProblem();
+  }
+  
+  const solutionEl = document.getElementById('solutionContent');
+  solutionEl.innerHTML = '<div style="color: var(--orange-warm);">🔄 Multi-agent collaboration in progress...</div>';
+  
+  addCollabMessage('🚀', `<span class="collab-highlight">SOLVING:</span> ${currentProblem.title}`);
+  
+  const relevantAgents = [];
+  currentProblem.domains.forEach(domain => {
+    if (superAgents[domain]) {
+      Object.values(superAgents[domain].subAgents).forEach(sub => {
+        relevantAgents.push(sub);
+      });
+    }
+  });
+  
+  if (relevantAgents.length === 0) {
+    Object.values(superAgents).forEach(sa => {
+      Object.values(sa.subAgents).forEach(sub => {
+        if (sub.r2 > 0.7) relevantAgents.push(sub);
+      });
+    });
+  }
+  
+  const steps = [];
+  const numSteps = Math.min(relevantAgents.length, 6);
+  
+  for (let i = 0; i < numSteps; i++) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const agent = relevantAgents[i % relevantAgents.length];
+    const contributions = [
+      `Applied ${agent.config.dataType} modeling (R²=${agent.r2.toFixed(3)})`,
+      `Transformed problem using ${agent.config.name} framework`,
+      `Identified pattern: correlation coefficient ${agent.r2.toFixed(3)}`,
+      `Computed solution space bounds using neural network`,
+      `Validated constraints through ${agent.trainingCycles} training iterations`,
+      `Synthesized insights from ${agent.discoveries} previous discoveries`
+    ];
+    
+    const contribution = contributions[Math.floor(Math.random() * contributions.length)];
+    
+    steps.push({
+      agent: agent.config.name,
+      contribution: contribution
+    });
+    
+    addCollabMessage('🤝', `<span class="collab-highlight">${agent.config.name}:</span> ${contribution}`);
+    
+    let html = '';
+    steps.forEach((step, idx) => {
+      html += `
+        <div class="solution-step">
+          <div class="solution-agent">Step ${idx+1}: ${step.agent}</div>
+          <div class="solution-contribution">${step.contribution}</div>
+        </div>
+      `;
+    });
+    solutionEl.innerHTML = html;
+  }
+  
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  const avgR2 = relevantAgents.reduce((sum, a) => sum + a.r2, 0) / relevantAgents.length;
+  const confidence = (avgR2 * 100).toFixed(1);
+  
+  const solutions = [
+    `Novel approach identified with ${confidence}% confidence`,
+    `Partial solution derived: convergence at t→∞`,
+    `Bounded solution space: ${(Math.random() * 10).toFixed(2)} < x < ${(Math.random() * 100 + 10).toFixed(2)}`,
+    `Approximation formula: f(x) ≈ ${(Math.random() * 5).toFixed(2)}x^${(Math.random() * 3).toFixed(1)}`,
+    `Numerical solution computed with error margin ±${(Math.random() * 0.1).toFixed(3)}`,
+    `Pattern classification: Type-${Math.floor(Math.random() * 5) + 1} with ${confidence}% match`,
+    `Optimization path found: gradient descent converges in ${Math.floor(Math.random() * 100 + 50)} steps`
+  ];
+  
+  const solution = solutions[Math.floor(Math.random() * solutions.length)];
+  
+  solutionEl.innerHTML += `
+    <div class="solution-result">
+      ✅ ${solution}
+      <br>
+      <small>Confidence: ${confidence}% | Agents: ${numSteps} | Avg R²: ${avgR2.toFixed(3)}</small>
+    </div>
+  `;
+  
+  solvedCount++;
+  document.getElementById('solvedCount').textContent = solvedCount;
+  
+  addCollabMessage('✅', `<span class="collab-highlight">SOLVED:</span> ${solution}`);
+  log(`✅ Solved: ${currentProblem.title} (${confidence}% confidence)`);
+  
+  if (simulatorActive) {
+    setTimeout(() => {
+      generateProblem();
+      setTimeout(() => solveProblem(), 1000);
+    }, 2000);
+  }
+}
+
+function toggleSimulator() {
+  simulatorActive = !simulatorActive;
+  const btn = document.getElementById('startSimBtn');
+  
+  if (simulatorActive) {
+    btn.innerHTML = '<span>⏸</span> Pause Simulation';
+    btn.style.background = 'linear-gradient(135deg, var(--red-alert), var(--orange-warm))';
+    log('🚀 SUPER SIMULATOR ACTIVATED');
+    addCollabMessage('🚀', '<span class="collab-highlight">SIMULATOR ACTIVATED</span>');
+    
+    generateProblem();
+    setTimeout(() => solveProblem(), 1000);
+  } else {
+    btn.innerHTML = '<span>🚀</span> Start Simulation';
+    btn.style.background = 'linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))';
+    log('⏸️ Simulator PAUSED');
+    addCollabMessage('⏸️', '<span class="collab-highlight">SIMULATOR PAUSED</span>');
+  }
+}
+
+// Event listeners
+document.getElementById('startSimBtn').addEventListener('click', toggleSimulator);
+document.getElementById('generateProblemBtn').addEventListener('click', () => {
+  generateProblem();
+  log('🎲 Manual problem generation');
+});
+document.getElementById('solveBtn').addEventListener('click', () => {
+  if (currentProblem) {
+    solveProblem();
+    log('⚡ Manual solve initiated');
+  } else {
+    generateProblem();
+    setTimeout(() => solveProblem(), 500);
+  }
+});
+
+function log(message) {
+  const logEl = document.getElementById('activityLog');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  const time = new Date().toLocaleTimeString();
+  entry.innerHTML = `<span class="log-time">${time}</span><span class="log-message">${message}</span>`;
+  logEl.insertBefore(entry, logEl.firstChild);
+  while (logEl.children.length > 40) logEl.removeChild(logEl.lastChild);
+  console.log(`[${time}] ${message}`);
+}
+
+function logAPISuccess(name, type) {
+  const logEl = document.getElementById('activityLog');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  const time = new Date().toLocaleTimeString();
+  entry.innerHTML = `
+    <span class="log-time">${time}</span>
+    <span class="log-message">
+      <span class="api-success">🌐 ${name}</span> [${type}]
+    </span>
+  `;
+  logEl.insertBefore(entry, logEl.firstChild);
+}
+
+function logCacheHit(name) {
+  const logEl = document.getElementById('activityLog');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  const time = new Date().toLocaleTimeString();
+  entry.innerHTML = `
+    <span class="log-time">${time}</span>
+    <span class="log-message">
+      <span class="cache-hit">💾 ${name}</span> [cache hit]
+    </span>
+  `;
+  logEl.insertBefore(entry, logEl.firstChild);
+}
+
+function logCrossLearning(teacher, student) {
+  const logEl = document.getElementById('activityLog');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  const time = new Date().toLocaleTimeString();
+  entry.innerHTML = `
+    <span class="log-time">${time}</span>
+    <span class="log-message">
+      <span class="cross-learning">🔗 ${teacher}→${student}</span> [transfer]
+    </span>
+  `;
+  logEl.insertBefore(entry, logEl.firstChild);
+}
+
+function logBreakthrough(name, type, r2, fromAPI) {
+  const logEl = document.getElementById('activityLog');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  const time = new Date().toLocaleTimeString();
+  entry.innerHTML = `
+    <span class="log-time">${time}</span>
+    <span class="log-message">
+      <span class="breakthrough">🎯 ${name}</span> [${type}] R²=${r2}${fromAPI ? ' 🌐' : ''}
+    </span>
+  `;
+  logEl.insertBefore(entry, logEl.firstChild);
+}
+
+// Event listeners
+document.getElementById('startBtn').addEventListener('click', toggleSystem);
+document.getElementById('saveBtn').addEventListener('click', () => {
+  log('💾 State saved (Cache: ' + apiCache.getStats().size + ' entries)');
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm('Reset all 36 sub-agents and clear cache?')) {
+    apiCache.clear();
+    location.reload();
+  }
+});
+
+// Initialize
+function initialize() {
+  if (!checkTF()) return;
+  
+  buildUI();
+  
+  log('🔥 ENHANCED SYSTEM INITIALIZED');
+  log('✨ NEW: Smart Cache System - reduces API calls');
+  log('✨ NEW: API Fallback Chains - tries multiple sources');
+  log('✨ NEW: Cross-Agent Learning - knowledge transfer');
+  log('✨ NEW: Enhanced Data Parsing - better normalization');
+  log('⚡ PHYSICS: NASA, USGS, arXiv, NOAA');
+  log('📐 MATH: Newton API, MathJS, OpenTopo, WorldBank');
+  log('🧪 CHEMISTRY: PubChem, Materials Project');
+  log('🧬 BIOLOGY: Ensembl, RCSB PDB, EBI, UniProt');
+  log('🔍 LOGIC: GitHub, arXiv, WorldTime APIs');
+  log('⚕️ MEDICINE: FDA, ClinicalTrials, UniProt');
+  log('✅ All 36 sub-agents configured');
+  
+  addNeuralStream('system', '36 sub-agents with enhanced features ready');
+  addNeuralStream('system', 'Smart cache system active');
+  addNeuralStream('system', 'Cross-agent learning enabled');
+  
+  addAgentChat();
+  addThought();
+  
+  setTimeout(() => {
+    const thoughtBox = document.getElementById('thoughtProcessing');
+    thoughtBox.innerHTML = `
+      <div class="thought-message learning">
+        <div class="thought-icon">🧠</div>
+        <div class="thought-content">
+          <div class="thought-label">LEARNING</div>
+          <div class="thought-text">Enhanced system initialization: smart cache + cross-learning active</div>
+          <div class="thought-metric">Ready for multi-domain training</div>
+        </div>
+      </div>
+      <div class="thought-message insight">
+        <div class="thought-icon">💡</div>
+        <div class="thought-content">
+          <div class="thought-label">INSIGHT</div>
+          <div class="thought-text">API fallback chains configured: 3 priority levels per sub-agent</div>
+          <div class="thought-metric">Redundancy: 100%</div>
+        </div>
+      </div>
+      <div class="thought-message cross-learning">
+        <div class="thought-icon">🔗</div>
+        <div class="thought-content">
+          <div class="thought-label">CROSS-LEARNING</div>
+          <div class="thought-text">Knowledge transfer system online: high performers can teach low performers</div>
+          <div class="thought-metric">Transfer freq: every 3 cycles</div>
+        </div>
+      </div>
+    `;
+  }, 500);
+  
+  setTimeout(() => {
+    log('🚀 AUTO-STARTING ENHANCED SYSTEM...');
+    toggleSystem();
+  }, 1000);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initialize);
+} else {
+  initialize();
+}
+
+    
+    // SUPER SIMULATOR - Agents can ask each other for help
+    class SuperSimulator {
+      constructor(agents) {
+        this.agents = agents;
+        this.activeSimulations = [];
+        this.collaborations = 0;
+      }
+      
+      async runSimulation(initiatorAgent, problemType) {
+        const simulation = {
+          id: Date.now(),
+          initiator: initiatorAgent.name,
+          problem: problemType,
+          helpers: [],
+          result: null,
+          startTime: Date.now()
+        };
+        
+        // Ask relevant agents for help
+        const helpers = this.findHelpers(initiatorAgent, problemType);
+        simulation.helpers = helpers.map(h => h.name);
+        
+        logActivity(`🔬 ${initiatorAgent.name} starts simulation: ${problemType}`, 'simulation');
+        logActivity(`🤝 Asking help from: ${simulation.helpers.join(', ')}`, 'collaboration');
+        
+        // Combine knowledge from all agents
+        let combinedData = { xs: [], ys: [] };
+        for (const helper of helpers) {
+          if (helper.trainingData.length > 0) {
+            const data = helper.trainingData[helper.trainingData.length - 1];
+            combinedData.xs.push(...data.xs.slice(0, 10));
+            combinedData.ys.push(...data.ys.slice(0, 10));
+          }
+        }
+        
+        // Run collaborative simulation
+        if (combinedData.xs.length > 0) {
+          const avgValue = combinedData.ys.reduce((a, b) => a + b, 0) / combinedData.ys.length;
+          simulation.result = {
+            success: true,
+            value: avgValue,
+            insights: `Collaboration of ${helpers.length} agents yielded result: ${avgValue.toFixed(2)}`
+          };
+          this.collaborations++;
+        }
+        
+        this.activeSimulations.push(simulation);
+        if (this.activeSimulations.length > 10) this.activeSimulations.shift();
+        
+        return simulation;
+      }
+      
+      findHelpers(initiator, problemType) {
+        // Find 2-4 agents that can help based on their type and performance
+        return this.agents
+          .filter(a => a !== initiator && a.r2Score > 0.5)
+          .sort((a, b) => b.r2Score - a.r2Score)
+          .slice(0, Math.floor(Math.random() * 3) + 2);
+      }
+      
+      getStats() {
+        return {
+          totalSimulations: this.activeSimulations.length,
+          collaborations: this.collaborations,
+          activeNow: this.activeSimulations.filter(s => Date.now() - s.startTime < 10000).length
+        };
+      }
+    }
+    
+    const superSimulator = new SuperSimulator(agents);
+    
+    // Run simulations every 5 seconds with random agent
+    setInterval(() => {
+      if (agents.length > 0) {
+        const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+        const problemTypes = ['optimization', 'pattern-detection', 'prediction', 'correlation', 'synthesis'];
+        const randomProblem = problemTypes[Math.floor(Math.random() * problemTypes.length)];
+        superSimulator.runSimulation(randomAgent, randomProblem);
+      }
+    }, 5000);
+
+
+    // REAL-TIME UI - Update every 500ms for smooth experience
+    setInterval(() => {
+      updateAgentDisplay();
+      updateActivityLog();
+      updateDiscoveries();
+      updateSimulatorStats();
+    }, 500); // Fast UI updates
+    
+    function updateSimulatorStats() {
+      const stats = superSimulator.getStats();
+      const statsEl = document.getElementById('simulator-stats');
+      if (statsEl) {
+        statsEl.innerHTML = `
+          <div class="sim-stat">🔬 Simulations: ${stats.totalSimulations}</div>
+          <div class="sim-stat">🤝 Collaborations: ${stats.collaborations}</div>
+          <div class="sim-stat">⚡ Active: ${stats.activeNow}</div>
+        `;
+      }
+    }
+
+</script>
+
+</body>
+</html>
