@@ -1,4 +1,4 @@
-// script.js - Safari/GitHub Pages ready with network + grid view
+// script.js - Safari/GitHub Pages ready with network + grid view (no white status above agents)
 
 const AGENT_COUNT = 36;
 const AGENTS = [
@@ -19,6 +19,11 @@ const container = document.querySelector('.container');          // for grid
 // create grid container
 let gridEl = document.createElement('div');
 gridEl.className = 'grid';
+gridEl.style.display = 'grid';
+gridEl.style.gridTemplateColumns = 'repeat(auto-fit, minmax(150px, 1fr))';
+gridEl.style.gap = '10px';
+gridEl.style.width = '100%';
+gridEl.style.marginTop = '0'; // tighter spacing
 container.insertBefore(gridEl, container.firstChild.nextSibling); // insert after banner
 
 // function to log messages
@@ -53,18 +58,21 @@ function renderNetwork(){
   });
 }
 
-// render grid view
+// render grid view (no status text, tight layout)
 function renderGrid(){
   gridEl.innerHTML = '';
   AGENTS.forEach(agent => {
     const card = document.createElement('div');
     card.className = 'card';
-    card.innerHTML = `<div class="agent-title">${agent}</div><div class="agent-sub">Status: idle</div>`;
+    card.style.margin = '0';      // collapse vertical spacing
+    card.style.padding = '10px';  // consistent padding
+    card.style.boxSizing = 'border-box';
+    card.innerHTML = `<div class="agent-title">${agent}</div>`; // only agent name
     gridEl.appendChild(card);
   });
 }
 
-// simulate agent activation
+// simulate agent activation (no status update)
 function runAgents(){
   startBtn.disabled = true;
   startBtn.innerText = 'Activating…';
@@ -73,15 +81,7 @@ function runAgents(){
   AGENTS.forEach(agent => {
     const result = `${agent}: simulated result ready`;
     log(result);
-    
-    // update grid card
-    const cards = gridEl.getElementsByClassName('card');
-    for (let card of cards){
-      if(card.querySelector('.agent-title').innerText === agent){
-        card.querySelector('.agent-sub').innerText = 'Status: active';
-        break;
-      }
-    }
+    // grid cards remain unchanged
   });
 
   startBtn.innerText = 'Activated';
