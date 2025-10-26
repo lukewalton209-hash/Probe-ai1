@@ -1,4 +1,4 @@
-// script.js - Clean, fully functional version for Super Agents
+// script.js - Clean version: no boxes above Super Agents grid, full functionality
 
 const AGENT_COUNT = 36;
 const AGENTS = [
@@ -12,7 +12,7 @@ const AGENTS = [
 
 // UI elements
 const startBtn = document.getElementById('startBtn');
-const networkCanvas = document.getElementById('superAgentsGrid'); // grid display
+const networkCanvas = document.getElementById('superAgentsGrid'); // network display
 const logEl = document.getElementById('activityLog');            // logs
 const container = document.querySelector('.container');          // container
 
@@ -29,7 +29,7 @@ function log(msg){
   logEl.prepend(entry);
 }
 
-// render network nodes – only keep the "Probe AI" center node
+// render network nodes – only center node, no extra agent boxes
 function renderNetwork(){
   networkCanvas.innerHTML = ''; // clear previous nodes
 
@@ -37,8 +37,6 @@ function renderNetwork(){
   center.className = 'center-node';
   center.innerText = 'Probe AI';
   networkCanvas.appendChild(center);
-
-  // Removed all 36 agent nodes above grid
 }
 
 // render Super Agents grid
