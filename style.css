@@ -886,7 +886,29 @@ background: var(–accent-cyan);
   50% { transform: scale(1.2); }
 }
 
-/* --- Neural stream indicator stays fixed --- */
+/* Hide everything above the cards */
+body *:not(.super-agents-grid):not(.super-agents-grid *) {
+    display: none !important;
+}
+
+/* Make sure the cards sit at the top and are centered */
+body, html, .container {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.super-agents-grid {
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 5px;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Keep neural stream indicator visible */
 .neural-stream-indicator {
   position: fixed;
   top: 10px;
@@ -903,28 +925,5 @@ background: var(–accent-cyan);
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-5px); }
-}
-
-/* --- Super-clean card view --- */
-body, html, .container {
-    margin: 0 !important;
-    padding: 0 !important;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center; /* centers the cards horizontally */
-}
-
-/* Hide everything except the cards */
-body *:not(.super-agents-grid):not(.super-agents-grid *) {
-    display: none !important;
-}
-
-/* Keep grid layout and top alignment */
-.super-agents-grid {
-    display: grid; /* your existing grid layout */
-    grid-template-columns: repeat(2, 1fr); /* or your existing setup */
-    gap: 5px;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
 }
 </style>
