@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -17,6 +16,15 @@
   .probe-banner,
   .status-line {
       display: none !important;
+  }
+
+  /* --- Remove white text above agents and collapse space --- */
+  .super-agents-grid .agent-status {
+      display: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: 0 !important;
+    line-height: 0 !important;
   }
 
   /* --- Collaboration Indicator --- */
@@ -105,7 +113,6 @@
     }
   }
 </style>
-
 </head>
 <body>
   <div class="neural-stream-indicator" id="stream-indicator">🌊 Neural Stream: Active</div>
