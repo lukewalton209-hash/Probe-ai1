@@ -1,96 +1,124 @@
-// script.js - Fixed for your Alpha layout
+// --- script.js ---
 
+// --- Super Agents Setup ---
 const AGENTS = [
-  "Physics","Mathematics","Logic","Neuroscience","Cognitive Science","Optimization",
-  "Robotics","Systems","Ethics","Philosophy","Economics","Sociology",
-  "AI Safety","ML Engineering","Data Science","Statistics","HCI","Design",
-  "Security","Control Theory","Linguistics","Biology","Chemistry","Materials",
-  "Law","Policy","Education","Healthcare","Product","Strategy",
-  "Visualization","Hardware","Compilers","Distributed Systems","Causality","Creativity"
+  { name: "Physics", class: "physics" },
+  { name: "Mathematics", class: "math" },
+  { name: "Logic", class: "logic" },
+  { name: "Chemistry", class: "chemistry" },
+  { name: "Biology", class: "biology" },
+  { name: "Medicine", class: "medicine" },
 ];
 
-const startBtn = document.getElementById('startBtn');
-const superAgentsGrid = document.getElementById('superAgentsGrid');
-const activityLog = document.getElementById('activityLog');
+const SUB_AGENT_COUNT = 6;
 
-// Render your Super Agents cards exactly as before
-function renderGrid(){
-  superAgentsGrid.innerHTML = '';
-  AGENTS.forEach(agent => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    // Keep the agent name inside the card
-    card.innerHTML = `<div class="agent-title">${agent}</div>`;
-    superAgentsGrid.appendChild(card);
-  });
+const superAgentsGrid = document.getElementById("superAgentsGrid");
+
+// Generate super agent cards with sub-agents
+AGENTS.forEach(agent => {
+  const card = document.createElement("div");
+  card.classList.add("super-agent-card", agent.class);
+
+  const header = document.createElement("div");
+  header.classList.add("super-agent-header");
+
+  const title = document.createElement("div");
+  title.classList.add("super-agent-title");
+  title.innerHTML = `<span class="super-agent-icon">🧠</span> <span class="super-agent-name">${agent.name}</span>`;
+
+  header.appendChild(title);
+  card.appendChild(header);
+
+  const stats = document.createElement("div");
+  stats.classList.add("super-agent-stats");
+  stats.innerText = `Sub-Agents: ${SUB_AGENT_COUNT}`;
+  card.appendChild(stats);
+
+  const subGrid = document.createElement("div");
+  subGrid.classList.add("sub-agents-grid");
+
+  for (let i = 0; i < SUB_AGENT_COUNT; i++) {
+    const subCard = document.createElement("div");
+    subCard.classList.add("sub-agent-card");
+    subCard.innerHTML = `<div class="sub-agent-icon">🤖</div><div class="sub-agent-name">Agent ${i+1}</div>`;
+    subGrid.appendChild(subCard);
+  }
+
+  card.appendChild(subGrid);
+  superAgentsGrid.appendChild(card);
+});
+
+// --- Neural Stream ---
+const neuralStream = document.getElementById("neuralStream");
+function addNeuralStream(message) {
+  const div = document.createElement("div");
+  div.classList.add("stream-item");
+  div.textContent = message;
+  neuralStream.appendChild(div);
+  neuralStream.scrollTop = neuralStream.scrollHeight;
 }
 
-// Simulate agent activation
-function runAgents(){
-  startBtn.disabled = true;
-  startBtn.innerText = 'Activating…';
-  log('Activating all Super Agents...');
-
-  AGENTS.forEach(agent => {
-    const result = `${agent}: ready`;
-    log(result);
-
-    // mark card as active visually
-    const cards = superAgentsGrid.getElementsByClassName('card');
-    for (let card of cards){
-      if(card.querySelector('.agent-title').innerText === agent){
-        card.classList.add('active');
-        break;
-      }
-    }
-  });
-
-  startBtn.innerText = 'Activated';
-  startBtn.disabled = false;
+// --- Thought Processing ---
+const thoughtProcessing = document.getElementById("thoughtProcessing");
+function addThought(message, type = "insight") {
+  const div = document.createElement("div");
+  div.classList.add("thought-message", type);
+  div.innerHTML = `<span class="thought-icon">💡</span><div class="thought-content">${message}</div>`;
+  thoughtProcessing.appendChild(div);
+  thoughtProcessing.scrollTop = thoughtProcessing.scrollHeight;
 }
 
-// log helper
-function log(msg){
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
-  entry.innerText = msg;
-  activityLog.prepend(entry);
+// --- Agent Chat ---
+const agentChat = document.getElementById("agentChat");
+function addChat(agent, message, agentClass) {
+  const div = document.createElement("div");
+  div.classList.add("chat-message", agentClass);
+  div.innerHTML = `<span class="chat-agent">${agent}</span><div class="chat-content">${message}</div>`;
+  agentChat.appendChild(div);
+  agentChat.scrollTop = agentChat.scrollHeight;
 }
 
-// Initial render
-renderGrid();
-startBtn.addEventListener('click', runAgents);
+// --- Collaboration Stream ---
+const collaborationStream = document.getElementById("collaborationStream");
+function addCollab(agent, message) {
+  const div = document.createElement("div");
+  div.classList.add("collab-message");
+  div.innerHTML = `<span class="collab-icon">🤝</span><div class="collab-text"><strong>${agent}</strong>: ${message}</div>`;
+  collaborationStream.appendChild(div);
+  collaborationStream.scrollTop = collaborationStream.scrollHeight;
+}
 
-// Optional CSS for cards and activity log
-const style = document.createElement('style');
-style.innerHTML = `
-  .super-agents-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-    width: 100%;
-  }
-  .card {
-    background-color: #1a1f3d;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    color: white;
-    transition: transform 0.2s, background-color 0.2s;
-  }
-  .card.active {
-    background-color: #4a9eff;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px #4a9eff;
-  }
-  .agent-title {
-    font-weight: bold;
-    font-size: 14px;
-  }
-  .log-entry {
-    font-size: 12px;
-    margin-bottom: 2px;
-    color: #ffffff;
-  }
-`;
-document.head.appendChild(style);
+// --- Activity Log ---
+const activityLog = document.getElementById("activityLog");
+function logActivity(message, type = "") {
+  const div = document.createElement("div");
+  div.classList.add("log-entry");
+  div.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span class="log-message ${type}">${message}</span>`;
+  activityLog.appendChild(div);
+  activityLog.scrollTop = activityLog.scrollHeight;
+}
+
+// --- Simulation Buttons ---
+document.getElementById("startSimBtn").addEventListener("click", () => {
+  logActivity("Simulation started.");
+  addNeuralStream("Neural Stream: Active...");
+});
+
+document.getElementById("generateProblemBtn").addEventListener("click", () => {
+  logActivity("Generated new problem.");
+  document.getElementById("problemContent").innerText = "Solve X + Y = ?";
+});
+
+document.getElementById("solveBtn").addEventListener("click", () => {
+  logActivity("Solution computed.");
+  document.getElementById("solutionContent").innerText = "X=5, Y=3";
+  addCollab("Physics", "Verified calculation.");
+  addChat("Math", "Solution confirmed.", "math");
+  addThought("Cross-domain validation complete.", "cross-learning");
+});
+
+// --- Optional: Start button (if you want dynamic start) ---
+document.getElementById("startBtn").addEventListener("click", () => {
+  logActivity("System STARTED.");
+  addNeuralStream("Probe AI online...");
+});
