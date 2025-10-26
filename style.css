@@ -20,6 +20,7 @@
   --blue: #2196F3;
 }
 
+/* --- Body & Global --- */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: var(--bg-dark);
@@ -81,9 +82,7 @@ html {
   margin-bottom: 3px;
 }
 
-.probe-icon {
-  font-size: 12px;
-}
+.probe-icon { font-size: 12px; }
 
 .probe-title {
   font-size: 16px;
@@ -91,6 +90,8 @@ html {
   background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
 }
 
 .probe-subtitle {
@@ -123,15 +124,9 @@ html {
   transition: all 0.3s;
 }
 
-.btn-save {
-  background: var(--blue);
-  color: white;
-}
-
-.btn-reset {
-  background: var(--red-alert);
-  color: white;
-}
+.btn-save { background: var(--blue); color: white; }
+.btn-reset { background: var(--red-alert); color: white; }
+.btn-active { background: var(--accent-green); color: #000; }
 
 .btn:hover { opacity: 0.8; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -146,15 +141,8 @@ html {
 }
 
 /* --- Container & Sections --- */
-.container {
-  padding: 5px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.section {
-  margin-bottom: 5px;
-}
+.container { padding: 5px; max-width: 1400px; margin: 0 auto; }
+.section { margin-bottom: 5px; }
 
 .section-header {
   display: flex;
@@ -179,10 +167,17 @@ html {
 .super-agent-card {
   background: linear-gradient(135deg, #1a1f3a 0%, #2a1f3a 100%);
   border: 2px solid;
-  box-shadow: 0 0 8px;
   border-radius: 4px;
   padding: 5px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
 }
+
+.super-agent-card.physics { border-color: #fc3d21; box-shadow: 0 0 8px rgba(252,61,33,0.3); }
+.super-agent-card.math { border-color: var(--blue); box-shadow: 0 0 8px rgba(33,150,243,0.3); }
+.super-agent-card.logic { border-color: var(--accent-purple); box-shadow: 0 0 8px rgba(157,78,221,0.3); }
+.super-agent-card.chemistry { border-color: var(--accent-green); box-shadow: 0 0 8px rgba(0,255,136,0.3); }
+.super-agent-card.biology { border-color: var(--accent-cyan); box-shadow: 0 0 8px rgba(0,217,255,0.3); }
+.super-agent-card.medicine { border-color: var(--gold); box-shadow: 0 0 8px rgba(255,215,0,0.3); }
 
 .super-agent-header {
   display: flex;
@@ -193,28 +188,20 @@ html {
   border-bottom: 1px solid;
 }
 
-.super-agent-title {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
+.super-agent-title { display: flex; align-items: center; gap: 3px; }
 .super-agent-icon { font-size: 14px; }
 .super-agent-name { font-size: 8px; font-weight: 800; }
 
-/* Color variations */
-.super-agent-card.physics { border-color: #fc3d21; }
-.super-agent-card.math { border-color: var(--blue); }
-.super-agent-card.chemistry { border-color: var(--accent-green); }
-.super-agent-card.biology { border-color: var(--accent-cyan); }
-.super-agent-card.logic { border-color: var(--accent-purple); }
-.super-agent-card.medicine { border-color: var(--gold); }
+.super-agent-card.physics .super-agent-name { color: #fc3d21; }
+.super-agent-card.math .super-agent-name { color: var(--blue); }
+.super-agent-card.logic .super-agent-name { color: var(--accent-purple); }
+.super-agent-card.chemistry .super-agent-name { color: var(--accent-green); }
+.super-agent-card.biology .super-agent-name { color: var(--accent-cyan); }
+.super-agent-card.medicine .super-agent-name { color: var(--gold); }
 
-.super-agent-stats {
-  font-size: 5px;
-  color: var(--text-secondary);
-}
+.super-agent-stats { font-size: 5px; color: var(--text-secondary); }
 
+/* --- Sub Agents --- */
 .sub-agents-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -230,6 +217,36 @@ html {
   transition: all 0.3s;
 }
 
+.sub-agent-card.active { border-color: var(--accent-green); box-shadow: 0 0 3px rgba(0,255,136,0.3); animation: pulse 2s infinite; }
+.sub-agent-card.training { border-color: var(--orange-warm) !important; box-shadow: 0 0 6px rgba(255,99,72,0.6) !important; animation: training-pulse 0.5s infinite !important; }
+.sub-agent-card.fetching { border-color: var(--orange-warm); box-shadow: 0 0 3px rgba(255,99,72,0.3); }
+.sub-agent-card.api-success { border-color: var(--accent-cyan); box-shadow: 0 0 4px rgba(0,217,255,0.5); }
+
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 3px rgba(0,255,136,0.3); }
+  50% { box-shadow: 0 0 8px rgba(0,255,136,0.6); }
+}
+
+@keyframes training-pulse {
+  0%,100% { box-shadow: 0 0 6px rgba(255,99,72,0.6); transform: scale(1); }
+  50% { box-shadow: 0 0 10px rgba(255,99,72,0.9); transform: scale(1.02); }
+}
+
+/* --- Progress Bars --- */
+.sub-agent-progress {
+  height: 2px;
+  background: #1a1f3a;
+  border-radius: 1px;
+  overflow: hidden;
+  margin-bottom: 1px;
+}
+
+.sub-agent-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #fc3d21, #ff6348);
+  transition: width 0.3s;
+}
+
 /* --- Neural Stream --- */
 .neural-stream {
   background: var(--bg-panel);
@@ -243,14 +260,58 @@ html {
 .stream-item {
   padding: 2px;
   margin-bottom: 2px;
-  background: rgba(0, 217, 255, 0.05);
+  background: rgba(0,217,255,0.05);
   border-left: 1px solid var(--accent-cyan);
   border-radius: 2px;
   font-size: 5px;
   color: var(--text-secondary);
 }
 
-/* --- Agent Chat --- */
+.stream-topic { font-weight: 600; color: var(--accent-cyan); }
+
+/* --- Thought Processing --- */
+.thought-processing {
+  background: linear-gradient(135deg, #1a1f3a 0%, #2a1f3a 50%, #1a2f3a 100%);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 3px;
+  padding: 5px;
+  max-height: 120px;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0,217,255,0.2);
+}
+
+.thought-message {
+  padding: 3px;
+  margin-bottom: 4px;
+  border-radius: 2px;
+  font-size: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  animation: thoughtFadeIn 0.5s;
+  background: rgba(0,217,255,0.05);
+  border-left: 2px solid;
+}
+
+.thought-message.insight { border-left-color: var(--accent-cyan); }
+.thought-message.learning { border-left-color: var(--accent-green); }
+.thought-message.discovery { border-left-color: var(--orange-warm); background: rgba(255,99,72,0.08); }
+.thought-message.pattern { border-left-color: var(--accent-purple); }
+.thought-message.optimization { border-left-color: var(--gold); }
+.thought-message.cross-learning { border-left-color: var(--accent-purple); background: rgba(157,78,221,0.08); }
+
+.thought-icon { font-size: 8px; min-width: 12px; }
+.thought-content { flex: 1; color: var(--text-primary); line-height: 1.4; }
+.thought-label { font-weight: 700; font-size: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.thought-text { color: var(--text-secondary); font-size: 6px; }
+.thought-metric { color: var(--accent-cyan); font-weight: 600; font-family: 'Courier New', monospace; }
+
+@keyframes thoughtFadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* --- Chat Messages --- */
 .agent-chat {
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
@@ -273,32 +334,20 @@ html {
   animation: fadeIn 0.3s;
 }
 
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
 .chat-agent { font-weight: 700; min-width: 45px; font-size: 6px; }
 .chat-content { flex: 1; color: var(--text-primary); font-size: 6px; line-height: 1.3; }
 
-/* --- Thought Processing --- */
-.thought-processing {
-  background: linear-gradient(135deg, #1a1f3a 0%, #2a1f3a 50%, #1a2f3a 100%);
-  border: 1px solid var(--accent-cyan);
-  border-radius: 3px;
-  padding: 5px;
-  max-height: 120px;
-  overflow-y: auto;
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
-}
+.chat-message.physics { background: rgba(252,61,33,0.1); border-left: 2px solid #fc3d21; }
+.chat-message.math { background: rgba(33,150,243,0.1); border-left: 2px solid #2196F3; }
+.chat-message.logic { background: rgba(157,78,221,0.1); border-left: 2px solid #9d4edd; }
+.chat-message.chemistry { background: rgba(0,255,136,0.1); border-left: 2px solid #00ff88; }
+.chat-message.biology { background: rgba(0,217,255,0.1); border-left: 2px solid #00d9ff; }
+.chat-message.medicine { background: rgba(255,215,0,0.1); border-left: 2px solid #ffd700; }
 
-.thought-message {
-  padding: 3px;
-  margin-bottom: 4px;
-  border-radius: 2px;
-  font-size: 6px;
-  display: flex;
-  align-items: flex-start;
-  gap: 3px;
-  animation: thoughtFadeIn 0.5s;
-  background: rgba(0, 217, 255, 0.05);
-  border-left: 2px solid;
-}
-
-.thought-icon { font-size: 8px; min-width: 12px; }
-.thought-content { flex: 1; color: var(--text-primary); line-height: 1.4; }
+/* --- Scrollbars --- */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
