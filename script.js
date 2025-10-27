@@ -1,20 +1,8 @@
-// === PROBE AI FULL LIVE ENGINE (NO HTML CHANGES NEEDED) ===
-// Works with your existing <div class="super-agents-grid"> and all IDs
-
-const PROBE = {
-  running: false,
-  agents: [],
-  superAgents: [],
-  problemIdx: 0,
-  solved: 0,
-  novel: 0,
-  tfModel: null,
-  superSimulator: null
-};
-
+// === PROBE AI LIVE ENGINE – WORKS WITH YOUR style.css & HTML ===
+const PROBE = { running: false, agents: [], superAgents: [], problemIdx: 0, solved: 0, novel: 0, tfModel: null, superSimulator: null };
 const $ = (id) => document.getElementById(id);
 const refs = {
-  superAgents: document.querySelector('.super-agents-grid') || $('superAgents'),
+  superAgents: document.querySelector('.super-agents-grid'),
   neuralStream: $('neuralStream'),
   agentChat: $('agentChat'),
   thoughtProcessing: $('thoughtProcessing'),
@@ -38,7 +26,7 @@ const SUPER_AGENTS = [
   {name:'Medicine',  color:'medicine',  emoji:'Heart'}
 ];
 
-// TensorFlow.js R² Model
+// Load TensorFlow.js
 async function initTF() {
   try {
     const model = tf.sequential();
@@ -49,9 +37,7 @@ async function initTF() {
     const ys = xs.mul(0.3).add(tf.randomNormal([100]).mul(0.1));
     await model.fit(xs, ys, {epochs: 50, verbose: 0});
     PROBE.tfModel = model;
-  } catch (e) {
-    console.error('TF.js failed to load:', e);
-  }
+  } catch (e) { console.error('TF.js:', e); }
 }
 initTF();
 
@@ -66,19 +52,18 @@ function buildSuperAgents() {
       <div class="super-agent-header">
         <div class="super-agent-title">
           <span class="super-agent-icon">${sa.emoji}</span>
-          <div class="super-agent-name">${sa.name}</div>
+          <span class="super-agent-name">${sa.name}</span>
         </div>
         <div class="super-agent-stats">R²: <span class="r2-val">—</span></div>
       </div>
       <div class="sub-agents-grid" id="sub-${i}"></div>
     `;
     refs.superAgents.appendChild(card);
-    PROBE.superAgents.push({grid: $(`sub-${i}`)});
+    PROBE.superAgents.push({ grid: $(`sub-${i}`) });
   });
 }
 
 function spawnAgents() {
-  if (PROBE.superAgents.length === 0) return;
   PROBE.agents = [];
   let id = 0;
   SUPER_AGENTS.forEach((sa, sIdx) => {
@@ -97,10 +82,7 @@ function spawnAgents() {
         <div class="sub-agent-discoveries">0</div>
       `;
       grid.appendChild(sub);
-      PROBE.agents.push({
-        id, sIdx, el: sub, status: 'idle',
-        progress: 0, r2: null, discoveries: 0
-      });
+      PROBE.agents.push({ id, sIdx, el: sub, status: 'idle', progress: 0, r2: null, discoveries: 0 });
       id++;
     }
   });
@@ -174,7 +156,8 @@ function startProbe() {
       a.el.querySelector('.sub-agent-progress-fill').style.width = a.progress + '%';
       if (a.progress >= 100) {
         a.status = 'active';
-        a.el.classList.remove('training'); a.el.classList.add('active');
+        a.el.classList.remove('training');
+        a.el.classList.add('active');
         a.el.querySelector('.sub-agent-status').textContent = 'ready';
         if (PROBE.tfModel) {
           (async () => {
@@ -208,11 +191,11 @@ function startProbe() {
         const problem = PROBLEMS[PROBE.solved];
         if (PROBE.superSimulator) {
           PROBE.superSimulator.runSimulation(
-            { name: `A${initiator.id}`, r2Score: a.r2 || 0.5 },
+            { name: `A${initiator.id}`, r2Score: initiator.r2 || 0.5 },
             problem.title
           );
         }
-092        PROBE.solved++;
+        PROBE.solved++;
         if (refs.solvedCount) refs.solvedCount.textContent = PROBE.solved;
         if (Math.random() < 0.35) { PROBE.novel++; if (refs.novelCount) refs.novelCount.textContent = PROBE.novel; }
         log(`Problem #${PROBE.solved} solved`, 'api-success');
@@ -231,7 +214,6 @@ function stopProbe() {
   log('All problems solved.', 'api-success');
 }
 
-// Button Controls
 document.addEventListener('click', e => {
   const t = e.target;
   if (t.matches('#startBtn, #simStart, .btn-active, #startSimBtn')) startProbe();
@@ -253,13 +235,8 @@ function resetProbe() {
   log('System reset', 'cache-hit');
 }
 
-// SuperSimulator Class (your original)
 class SuperSimulator {
-  constructor(agents) {
-    this.agents = agents;
-    this.activeSimulations = [];
-    this.collaborations = 0;
-  }
+  constructor(agents) { this.agents = agents; this.activeSimulations = []; this.collaborations = 0; }
   async runSimulation(initiatorAgent, problemType) {
     this.collaborations++;
     log(`Simulation: ${initiatorAgent.name} → ${problemType}`, 'simulation');
@@ -268,23 +245,16 @@ class SuperSimulator {
     return {
       totalSimulations: this.activeSimulations.length,
       collaborations: this.collaborations,
-      activeNow: this.activeSimulations.filter(s => Date.now() - s.startTime < 10000).length
+      activeNow: this.activeSimulations.filter(s => Date.now() - (s?.startTime || 0) < 10000).length
     };
   }
 }
 PROBE.superSimulator = new SuperSimulator(PROBE.agents);
 
-// Real-time UI
-setInterval(() => {
-  if (typeof updateAgentDisplay === 'function') updateAgentDisplay();
-  if (typeof updateActivityLog === 'function') updateActivityLog();
-  if (typeof updateDiscoveries === 'function') updateDiscoveries();
-  updateSimulatorStats();
-}, 500);
-
+setInterval(() => updateSimulatorStats(), 500);
 function updateSimulatorStats() {
-  const stats = PROBE.superSimulator ? PROBE.superSimulator.getStats() : { totalSimulations: 0, collaborations: 0, activeNow: 0 };
-  const statsEl = document.getElementById('simulator-stats');
+  const stats = PROBE.superSimulator?.getStats() || { totalSimulations: 0, collaborations: 0, activeNow: 0 };
+  const statsEl = $('simulator-stats');
   if (statsEl) {
     statsEl.innerHTML = `
       <div class="sim-stat">Simulations: ${stats.totalSimulations}</div>
@@ -294,10 +264,10 @@ function updateSimulatorStats() {
   }
 }
 
-// Init
 setTimeout(() => {
   buildSuperAgents();
   spawnAgents();
   log('PROBE AI loaded – 36 agents ready', 'cache-hit');
+  think('insight', 'SYSTEM', 'Cross-learning enabled across 6 domains');
   setTimeout(startProbe, 1000);
 }, 500);
